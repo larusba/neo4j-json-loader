@@ -12,8 +12,8 @@ Please be aware that this project is still under development and at this first s
 
 This example shows how to use build, install and run this server extension:
 
-1. Download Neo4j and extract it into your $PATH_TO_YOUR_NEO4J_TEST_INSTANCE: `wget http://dist.neo4j.org/neo4j-community-2.3.2-unix.tar.gz`
-2. Edit `$PATH_TO_YOUR_NEO4J_TEST_INSTANCE/conf/neo4-server.conf` adding `dbms.security.auth_enabled=false` - *BE AWARE! Just for testing purpose, so you can avoid passing credentials during tests.*
+1. Download Neo4j and extract it into your $PATH_TO_YOUR_NEO4J_TEST_INSTANCE: `*wget http://dist.neo4j.org/neo4j-community-2.3.2-unix.tar.gz*`
+2. Edit `$PATH_TO_YOUR_NEO4J_TEST_INSTANCE/conf/neo4-server.conf` adding `dbms.security.auth_enabled=false` - **BE AWARE! Just for testing purpose, so you can avoid passing credentials during tests.**
 3. Edit `$PATH_TO_YOUR_NEO4J_TEST_INSTANCE/conf/neo4-server.conf` adding `org.neo4j.server.thirdparty_jaxrs_classes=it.larusba.integration.neo4j.jsonloader.rest=/jsonloader` - To active this server extension
 4. Clone this repository into your $PATH_TO_JSON_LOADER: `git clone https://github.com/larusba/neo4j-json-loader.git`
 5. `cd $PATH_TO_JSON_LOADER/neo4j-json-loader`
