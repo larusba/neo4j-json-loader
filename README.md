@@ -2,7 +2,7 @@
 
 Welcome to the [Neo4j](http://neo4j.com/) JSON loader project.
 
-The main goal of this project is to provide a configurable Neo4j server extension to load, transform and save JSON documents into the graph.
+The main goal of this project is to provide a _configurable_ Neo4j server extension to load, transform and save JSON documents into the graph.
 
 Please be aware that this project is still under development and at this first stage will work only for a restricted set of data models.
 
