@@ -20,8 +20,6 @@ package it.larusba.integration.neo4j.jsonloader.rest;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.LinkedHashMap;
-
 import org.junit.Test;
 import org.neo4j.harness.ServerControls;
 import org.neo4j.harness.TestServerBuilders;
@@ -43,16 +41,36 @@ public class JsonLoaderRestControllerTest {
 		try (ServerControls server = TestServerBuilders.newInProcessBuilder()
 				.withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
 
-			String content = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
+			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", content, JsonMappingStrategy.ATTRIBUTE_BASED, null);
+			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonPersonDocument);
+
+			assertEquals(200, response.status());
+		}
+	}
+	
+	@Test
+	public void shouldLoadJSONWithNestedObjectsIntoGraph() throws Exception {
+		
+		try (ServerControls server = TestServerBuilders.newInProcessBuilder()
+				.withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
+			
+			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
+			
+			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": " + jsonAddressDocument  + "}";
+			
+			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument  + "}";
+			
+			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": " + jsonJobDocument + "}";
+			
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument, JsonMappingStrategy.ATTRIBUTE_BASED, null);
 			
 			String json = JsonHelper.createJsonFrom(jsonDocument);
 			
 			System.out.println(json);
 			
 			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
-
+			
 			assertEquals(200, response.status());
 		}
 	}
