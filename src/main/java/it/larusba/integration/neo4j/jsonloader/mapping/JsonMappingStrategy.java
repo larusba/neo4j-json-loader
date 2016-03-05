@@ -62,11 +62,11 @@ public enum JsonMappingStrategy {
 	 * This option allow us to instruct the transformer about how the domain is
 	 * defined.</br>
 	 */
-	ID_AND_TYPE("typed"),
+	DOMAIN_DRIVEN("domain"),
 
 	/**
-	 * Super flexible future implementations about transformation rules not yet
-	 * invented.
+	 * Super flexible future implementation about transformation rules.
+	 * Unfortunately it hasn't been invented yet. :-)
 	 */
 	FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED("tbd");
 

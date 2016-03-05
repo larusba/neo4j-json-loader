@@ -30,8 +30,36 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 /**
- * {@link JsonTransformer} implementation converting a JSON document into a
- * Cypher statement
+ * Domain agnostic {@link JsonTransformer} implementation.
+ * <p/>
+ * It converts a JSON document into a Cypher statement, following this strategy:
+ * <p/>
+ * <ul>
+ * <li>When primitive, JSON attributes become node properties and their names
+ * are used as property names.</li>
+ * <li>When object, JSON attributes become new nodes (in a recursive fashion)
+ * connected to their own father node.</li>
+ * </ul>
+ * As an example, the following JSON document
+ * <pre>
+ * Person: {
+ *   "firstname": "Lorenzo",
+ *   "lastname": "Speranzoni",
+ *   "age": 41,
+ *   "job":
+ *   {
+ *   	"role": "CEO",
+ *   	"company": "LARUS Business Automation"
+ *   }
+ * }
+ * </pre>
+ * will be translated into this sub-graph:
+ * <pre>
+ * CREATE (person:Person { firstname: 'Lorenzo', lastname: 'Speranzoni', age: 41 } )
+ * CREATE (job:JOB { role: 'CEO', company: 'LARUS Business Automation' })
+ * CREATE (person)-[:PERSON_JOB]->(job)
+ * </pre>
+ *
  * 
  * @author Lorenzo Speranzoni
  * 

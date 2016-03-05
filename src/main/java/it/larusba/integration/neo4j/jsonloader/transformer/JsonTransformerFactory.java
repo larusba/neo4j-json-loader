@@ -34,7 +34,7 @@ public class JsonTransformerFactory {
 
 		switch (graphMappingStrategy) {
 
-		case ID_AND_TYPE:
+		case DOMAIN_DRIVEN:
 			throw new UnsupportedOperationException();
 
 		case FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED:
