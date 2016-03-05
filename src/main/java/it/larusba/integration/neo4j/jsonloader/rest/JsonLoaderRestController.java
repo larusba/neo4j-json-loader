@@ -30,7 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.transformer.JsonToCypherTransformer;
+import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
+import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformerFactory;
 
 /**
  * @author Lorenzo Speranzoni
@@ -44,16 +45,22 @@ public class JsonLoaderRestController {
 
 	@PUT
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response loadJSON(JAXBElement<JsonDocument> jsonDocument) {
-
-		LOGGER.info("PUT /");
-		LOGGER.info("\n");
-		LOGGER.info("documentType: " + jsonDocument.getValue().getType());
-		LOGGER.info("jsonDocument: " + jsonDocument.getValue().getContent());
+	public Response loadJSON(JAXBElement<JsonDocument> jsonDocumentWrapper) {
 
 		try {
 
-			String cypher = new JsonToCypherTransformer().transform(jsonDocument.getValue().getType(), jsonDocument.getValue().getContent());
+			JsonDocument jsonDocument = jsonDocumentWrapper.getValue();
+			
+			LOGGER.info("PUT /");
+			LOGGER.info("");
+			LOGGER.info("document id: " + jsonDocument.getId());
+			LOGGER.info("document type: " + jsonDocument.getType());
+			LOGGER.info("document: " + jsonDocument.getContent());
+			LOGGER.info("mapping strategy: " + jsonDocument.getMappingStrategy());
+			
+			JsonTransformer<String> jsonTransformer = JsonTransformerFactory.getInstance(jsonDocument.getMappingStrategy());
+			
+			String cypher =  jsonTransformer.transform(jsonDocument.getId(), jsonDocument.getType(), jsonDocument.getContent());
 
 			LOGGER.info("Cypher statement:");
 			LOGGER.info("\n" + cypher);

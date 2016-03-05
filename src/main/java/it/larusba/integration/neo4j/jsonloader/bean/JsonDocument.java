@@ -18,20 +18,49 @@
  */
 package it.larusba.integration.neo4j.jsonloader.bean;
 
+import java.util.List;
+
+import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+
 /**
  *
  * @author Lorenzo Speranzoni
  */
 public class JsonDocument {
 
-	private String content;
+	private String id;
 	private String type;
-	
+	private String content;
+
+	private JsonMappingStrategy mappingStrategy;
+
+	private List<JsonObjectDescriptor> objectDescriptors;
+
 	public JsonDocument() {
 	}
-	
-	public JsonDocument(String content, String type) {
+
+	public JsonDocument(String id, String type, String content, JsonMappingStrategy mappingStrategy,
+			List<JsonObjectDescriptor> objectDescriptors) {
+		this.id = id;
+		this.type = type;
 		this.content = content;
+		this.mappingStrategy = mappingStrategy;
+		this.objectDescriptors = objectDescriptors;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -43,11 +72,19 @@ public class JsonDocument {
 		this.content = content;
 	}
 
-	public String getType() {
-		return type;
+	public JsonMappingStrategy getMappingStrategy() {
+		return mappingStrategy;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setMappingStrategy(JsonMappingStrategy mappingStrategy) {
+		this.mappingStrategy = mappingStrategy;
+	}
+
+	public List<JsonObjectDescriptor> getObjectDescriptors() {
+		return objectDescriptors;
+	}
+
+	public void setObjectDescriptors(List<JsonObjectDescriptor> objectDescriptors) {
+		this.objectDescriptors = objectDescriptors;
 	}
 }

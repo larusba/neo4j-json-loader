@@ -29,13 +29,14 @@ import org.codehaus.jackson.map.JsonMappingException;
  * 
  * @author Lorenzo Speranzoni
  * 
- * @see JsonToCypherTransformer
+ * @see AttributeBasedJsonTransformer
  */
 public interface JsonTransformer<T> {
 
 	/**
-	 * 
-	 * @param documentType
+	 * @param documentId
+	 *            unique identificator for the JSON document
+	 * @param documentRootType
 	 *            the associated JSON document type
 	 * @param jsonDocument
 	 *            the JSON document to transform
@@ -44,14 +45,17 @@ public interface JsonTransformer<T> {
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
-	T transform(String documentType, String jsonDocument) throws JsonParseException, JsonMappingException, IOException;
+	T transform(String documentId, String documentRootType, String jsonDocument)
+			throws JsonParseException, JsonMappingException, IOException;
 
 	/**
+	 * @param documentId
+	 *            unique identificator for the JSON document
 	 * @param documentType
 	 *            the associated JSON document type
 	 * @param documentMap
 	 *            the JSON document map representation
 	 * @return the generated cypher statement
 	 */
-	String transform(String documentType, Map<String, Object> documentMa);
+	String transform(String documentId, String documentType, Map<String, Object> documentMa);
 }

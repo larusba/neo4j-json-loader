@@ -30,47 +30,45 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 /**
- * {@link JsonTransformer} implementation converting a JSON document into a
- * Cypher statement
+ * {@link JsonTransformer} implementation converting a JSON document into
+ * a Cypher statement
  * 
  * @author Lorenzo Speranzoni
  * 
  * @see <a href="http://neo4j.com/blog/cypher-load-json-from-url/">http://neo4j.
  *      com/blog/cypher-load-json-from-url/</a>
  */
-public class JsonToCypherTransformer implements JsonTransformer<String> {
+public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 
 	/**
 	 * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
-	 *      java.lang.String)
+	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String transform(String documentType, String jsonDocument)
+	public String transform(String documentId, String documentType, String jsonDocument)
 			throws JsonParseException, JsonMappingException, IOException {
 
 		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument,
 				new TypeReference<Map<String, Object>>() {
 				});
 
-		return transform(documentType, documentMap);
+		return transform(documentId, documentType, documentMap);
 	}
 
 	/**
 	 * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
-	 *      java.util.Map)
+	 *      java.lang.String, java.util.Map)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
-	public String transform(String documentType, Map<String, Object> documentMap) {
+	public String transform(String documentId, String documentType, Map<String, Object> documentMap) {
 
 		StringBuffer rootNode = new StringBuffer();
 		List<String> childNodes = new ArrayList<String>();
 		List<String> childRelationships = new ArrayList<String>();
 
-		String documentKey = "documentKey";
-
 		rootNode.append("MERGE (").append(documentType).append(":").append(StringUtils.capitalize(documentType))
-				.append(" { couchbaseId: '").append(documentKey).append("' })\n");
+				.append(" { documentId: '").append(documentId).append("' })\n");
 
 		boolean firstAttr = true;
 
@@ -80,7 +78,7 @@ public class JsonToCypherTransformer implements JsonTransformer<String> {
 
 			if (attributeValue instanceof Map) {
 
-				childNodes.add(transform(attributeName, (Map<String, Object>) attributeValue));
+				childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
 
 				childRelationships.add(new StringBuffer().append("MERGE (").append(documentType).append(")-[")
 						.append(":").append(documentType.toUpperCase()).append("_").append(attributeName.toUpperCase())

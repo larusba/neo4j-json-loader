@@ -20,12 +20,16 @@ package it.larusba.integration.neo4j.jsonloader.rest;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.LinkedHashMap;
+
 import org.junit.Test;
 import org.neo4j.harness.ServerControls;
 import org.neo4j.harness.TestServerBuilders;
+import org.neo4j.server.rest.domain.JsonHelper;
 import org.neo4j.test.server.HTTP;
 
 import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
 
 /**
  *
@@ -41,8 +45,12 @@ public class JsonLoaderRestControllerTest {
 
 			String content = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
-			JsonDocument jsonDocument = new JsonDocument(content, "Person");
-
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", content, JsonMappingStrategy.ATTRIBUTE_BASED, null);
+			
+			String json = JsonHelper.createJsonFrom(jsonDocument);
+			
+			System.out.println(json);
+			
 			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
 
 			assertEquals(200, response.status());

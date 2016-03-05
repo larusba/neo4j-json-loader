@@ -21,7 +21,7 @@ package it.larusba.integration.neo4j.jsonloader.transformer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.larusba.integration.neo4j.jsonloader.transformer.JsonToCypherTransformer;
+import it.larusba.integration.neo4j.jsonloader.transformer.AttributeBasedJsonTransformer;
 import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
 
 /**
@@ -35,11 +35,11 @@ public class DocumentToCyhperTransformerTest {
 
 		try {
 
-			JsonTransformer<String> documentTransformer = new JsonToCypherTransformer();
+			JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
 
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
-			System.out.println(documentTransformer.transform("Person", jsonPersonDocument));
+			System.out.println(documentTransformer.transform("1234567890QWERTY", "Person", jsonPersonDocument));
 
 		} catch (Exception e) {
 
@@ -52,7 +52,7 @@ public class DocumentToCyhperTransformerTest {
 
 		try {
 
-			JsonTransformer<String> documentTransformer = new JsonToCypherTransformer();
+			JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
 
 			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 
@@ -64,7 +64,7 @@ public class DocumentToCyhperTransformerTest {
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
 					+ jsonJobDocument + "}";
 
-			System.out.println(documentTransformer.transform("Person", jsonPersonDocument));
+			System.out.println(documentTransformer.transform("1234567890QWERTY", "Person", jsonPersonDocument));
 
 		} catch (Exception e) {
 
