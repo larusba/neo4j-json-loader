@@ -28,7 +28,7 @@ import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
  *
  * @author Lorenzo Speranzoni
  */
-public class DocumentToCyhperTransformerTest {
+public class AttributeBasedJsonTransformerTest {
 
 	@Test
 	public void shouldTransformJsonDocumentIntoACypherStatement() {
