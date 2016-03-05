@@ -67,7 +67,7 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 		List<String> childNodes = new ArrayList<String>();
 		List<String> childRelationships = new ArrayList<String>();
 
-		rootNode.append("CREATE (").append(documentType).append(":").append(StringUtils.capitalize(documentType))
+		rootNode.append("MERGE (").append(documentType).append(":").append(StringUtils.capitalize(documentType))
 				.append(" { documentId: '").append(documentId).append("' })\n");
 
 		boolean firstAttr = true;
