@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.neo4j.harness.ServerControls;
 import org.neo4j.harness.TestServerBuilders;
-import org.neo4j.server.rest.domain.JsonHelper;
 import org.neo4j.test.server.HTTP;
 
 import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
@@ -42,10 +41,25 @@ public class JsonLoaderRestControllerTest {
 				.withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
 
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
+			
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument, JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
-			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonPersonDocument);
+			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
 
 			assertEquals(200, response.status());
+			
+			assertEquals(0, response.get("constraintsAdded").asInt());
+			assertEquals(0, response.get("constraintsRemoved").asInt());
+			assertEquals(0, response.get("containsUpdates").asInt());
+			assertEquals(0, response.get("indexesAdded").asInt());
+			assertEquals(0, response.get("indexesRemoved").asInt());
+			assertEquals(1, response.get("labelsAdded").asInt());
+			assertEquals(0, response.get("labelsRemoved").asInt());
+			assertEquals(1, response.get("nodesCreated").asInt());
+			assertEquals(0, response.get("nodesDeleted").asInt());
+			assertEquals(5, response.get("propertiesSet").asInt());
+			assertEquals(0, response.get("relationshipsCreated").asInt());
+			assertEquals(0, response.get("relationshipsDeleted").asInt());
 		}
 	}
 	
@@ -65,13 +79,22 @@ public class JsonLoaderRestControllerTest {
 			
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument, JsonMappingStrategy.ATTRIBUTE_BASED, null);
 			
-			String json = JsonHelper.createJsonFrom(jsonDocument);
-			
-			System.out.println(json);
-			
 			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
 			
 			assertEquals(200, response.status());
+			
+			assertEquals(0, response.get("constraintsAdded").asInt());
+			assertEquals(0, response.get("constraintsRemoved").asInt());
+			assertEquals(0, response.get("containsUpdates").asInt());
+			assertEquals(0, response.get("indexesAdded").asInt());
+			assertEquals(0, response.get("indexesRemoved").asInt());
+			assertEquals(4, response.get("labelsAdded").asInt());
+			assertEquals(0, response.get("labelsRemoved").asInt());
+			assertEquals(4, response.get("nodesCreated").asInt());
+			assertEquals(0, response.get("nodesDeleted").asInt());
+			assertEquals(15, response.get("propertiesSet").asInt());
+			assertEquals(3, response.get("relationshipsCreated").asInt());
+			assertEquals(0, response.get("relationshipsDeleted").asInt());
 		}
 	}
 }

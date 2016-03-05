@@ -21,17 +21,20 @@ package it.larusba.integration.neo4j.jsonloader.rest;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBElement;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.QueryStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
-import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformerFactory;
+import it.larusba.integration.neo4j.jsonloader.service.DefaultJsonLoaderService;
+import it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService;
 
 /**
  * @author Lorenzo Speranzoni
@@ -43,6 +46,12 @@ public class JsonLoaderRestController {
 
 	private static Logger LOGGER = LoggerFactory.getLogger(JsonLoaderRestController.class);
 
+	private final GraphDatabaseService graphDatabaseService;
+
+	public JsonLoaderRestController(@Context GraphDatabaseService graphDatabaseService) {
+		this.graphDatabaseService = graphDatabaseService;
+	}
+
 	@PUT
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response loadJSON(JAXBElement<JsonDocument> jsonDocumentWrapper) {
@@ -50,22 +59,19 @@ public class JsonLoaderRestController {
 		try {
 
 			JsonDocument jsonDocument = jsonDocumentWrapper.getValue();
-			
+
 			LOGGER.info("PUT /");
 			LOGGER.info("");
 			LOGGER.info("document id: " + jsonDocument.getId());
 			LOGGER.info("document type: " + jsonDocument.getType());
 			LOGGER.info("document: " + jsonDocument.getContent());
 			LOGGER.info("mapping strategy: " + jsonDocument.getMappingStrategy());
-			
-			JsonTransformer<String> jsonTransformer = JsonTransformerFactory.getInstance(jsonDocument.getMappingStrategy());
-			
-			String cypher =  jsonTransformer.transform(jsonDocument.getId(), jsonDocument.getType(), jsonDocument.getContent());
 
-			LOGGER.info("Cypher statement:");
-			LOGGER.info("\n" + cypher);
+			JsonLoaderService loaderService = new DefaultJsonLoaderService(this.graphDatabaseService);
 
-			return Response.ok().build();
+			QueryStatistics queryStatistics = loaderService.save(jsonDocument);
+
+			return Response.ok(queryStatistics).build();
 
 		} catch (Exception e) {
 
