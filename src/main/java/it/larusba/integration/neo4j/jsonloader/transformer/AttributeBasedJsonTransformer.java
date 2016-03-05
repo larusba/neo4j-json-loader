@@ -30,8 +30,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 /**
- * {@link JsonTransformer} implementation converting a JSON document into
- * a Cypher statement
+ * {@link JsonTransformer} implementation converting a JSON document into a
+ * Cypher statement
  * 
  * @author Lorenzo Speranzoni
  * 
@@ -67,8 +67,10 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 		List<String> childNodes = new ArrayList<String>();
 		List<String> childRelationships = new ArrayList<String>();
 
-		rootNode.append("MERGE (").append(documentType).append(":").append(StringUtils.capitalize(documentType))
-				.append(" { documentId: '").append(documentId).append("' })\n");
+		String nodeReference = StringUtils.lowerCase(documentType);
+		String nodeLabel = StringUtils.capitalize(nodeReference);
+		
+		rootNode.append("CREATE (").append(nodeReference).append(":").append(nodeLabel);
 
 		boolean firstAttr = true;
 
@@ -80,27 +82,36 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 
 				childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
 
-				childRelationships.add(new StringBuffer().append("MERGE (").append(documentType).append(")-[")
-						.append(":").append(documentType.toUpperCase()).append("_").append(attributeName.toUpperCase())
+				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[")
+						.append(":").append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase())
 						.append("]->(").append(attributeName).append(")").toString());
 			} else {
 
 				if (firstAttr) {
-					rootNode.append("ON CREATE SET ");
+					rootNode.append(" { ");
+
+					if (documentId != null) {
+						rootNode.append("_documentId: '").append(documentId).append("', ");
+					}
+
 					firstAttr = false;
 				} else {
 					rootNode.append(", ");
 				}
 
-				rootNode.append(documentType).append(".").append(attributeName).append(" = ");
+				if (attributeValue != null) {
+					rootNode.append(attributeName).append(": ");
 
-				if (attributeValue instanceof String) {
-					rootNode.append("'").append(attributeValue).append("'");
-				} else {
-					rootNode.append(attributeValue);
+					if (attributeValue instanceof String) {
+						rootNode.append("'").append(attributeValue).append("'");
+					} else {
+						rootNode.append(attributeValue);
+					}
 				}
 			}
 		}
+
+		rootNode.append(" })");
 
 		StringBuffer cypher = new StringBuffer();
 
