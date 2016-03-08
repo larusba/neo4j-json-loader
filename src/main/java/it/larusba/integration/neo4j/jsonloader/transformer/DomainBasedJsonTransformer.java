@@ -42,8 +42,10 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  * are used as property names.</li>
  * <li>When object, JSON attributes become new nodes (in a recursive fashion)
  * connected to their own father node.</li>
+ * <li>Value for the attribute defined in {@link JsonObjectDescriptor#getTypeAttribute} is assigned to node label.</li>
+ * <li>Values for the attributes defined in {@link JsonObjectDescriptor#getUniqueKeyAttributes} become the unique node in the merge operation.</li>
  * </ul>
- * As an example, the following JSON document
+ * As an example, the following JSON document:
  * 
  * <pre>
  * Person:
