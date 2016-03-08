@@ -84,7 +84,7 @@ public class DomainBasedJsonTransformerTest {
       jsonObjectDescriptors.add(jobObjectDescriptor);
       jsonObjectDescriptors.add(personObjectDescriptor);
 
-      String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
+      String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\", \"type\": \"Address\"}";
 
       String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
           + jsonAddressDocument + ", \"type\": \"Company\"}";

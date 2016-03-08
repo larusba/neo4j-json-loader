@@ -42,8 +42,11 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  * are used as property names.</li>
  * <li>When object, JSON attributes become new nodes (in a recursive fashion)
  * connected to their own father node.</li>
- * <li>Value for the attribute defined in {@link JsonObjectDescriptor#getTypeAttribute} is assigned to node label.</li>
- * <li>Values for the attributes defined in {@link JsonObjectDescriptor#getUniqueKeyAttributes} become the unique node in the merge operation.</li>
+ * <li>Value for the attribute defined in
+ * {@link JsonObjectDescriptor#getTypeAttribute} is assigned to node label.</li>
+ * <li>Values for the attributes defined in
+ * {@link JsonObjectDescriptor#getUniqueKeyAttributes} become the unique node in
+ * the merge operation.</li>
  * </ul>
  * As an example, the following JSON document:
  * 
@@ -131,11 +134,6 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
   }
 
   /**
-   * TODO we still don't use
-   * <code>objectDescriptorHelper.getTypeAttribute</code> to properly set node
-   * <code>Labels</code>.
-   * <p/>
-   * 
    * @param documentId
    * @param documentType
    * @param documentMap
@@ -150,8 +148,8 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
     List<String> childNodes = new ArrayList<String>();
     List<String> childRelationships = new ArrayList<String>();
 
-    String nodeReference = (documentType != null) ? StringUtils.lowerCase(documentType) : "document";
-    String nodeLabel = StringUtils.capitalize(nodeReference);
+    String nodeLabel = (String) documentMap.get(objectDescriptorHelper.getTypeAttribute(documentType));
+    String nodeReference = nodeLabel.toLowerCase();
 
     rootNode.append("MERGE (").append(nodeReference).append(":").append(nodeLabel);
 
@@ -167,7 +165,7 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
       if (attributeValue instanceof Map) {
 
         childNodes
-            .add(transform(documentId, attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper));
+            .add(transform(documentId, StringUtils.capitalize(attributeName), (Map<String, Object>) attributeValue, objectDescriptorHelper));
 
         childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
             .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
