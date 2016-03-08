@@ -43,28 +43,24 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
  * connected to their own father node.</li>
  * </ul>
  * As an example, the following JSON document
- * 
  * <pre>
  * Person: {
- *   "firstname": "Lorenzo",
- *   "lastname": "Speranzoni",
- *   "age": 41,
- *   "job":
+ *   "firstname" : "Lorenzo",
+ *   "lastname"  : "Speranzoni",
+ *   "age"       : 41,
+ *   "job"       :
  *   {
- *   	"role": "CEO",
- *   	"company": "LARUS Business Automation"
+ *     "role"    : "CEO",
+ *     "company" : "LARUS Business Automation"
  *   }
  * }
  * </pre>
- * 
  * will be translated into this sub-graph:
- * 
  * <pre>
  * CREATE (person:Person { firstname: 'Lorenzo', lastname: 'Speranzoni', age: 41 } )
  * CREATE (job:JOB { role: 'CEO', company: 'LARUS Business Automation' })
  * CREATE (person)-[:PERSON_JOB]->(job)
  * </pre>
- *
  * 
  * @author Lorenzo Speranzoni
  * 
