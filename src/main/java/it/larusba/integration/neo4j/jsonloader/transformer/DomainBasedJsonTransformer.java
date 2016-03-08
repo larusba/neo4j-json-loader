@@ -64,10 +64,14 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  *         "zipCode"  : 30174,
  *         "city"     : "Mestre",
  *         "province" : "Venice",
- *         "country"  : "Italy"
- *       }
- *     }  
- *   }
+ *         "country"  : "Italy",
+ *         "type"     : "Address"
+ *       },
+ *       "type"    : "Company" 
+ *     },
+ *     "type"    : "Job" 
+ *   },
+ *   "type": "Person"
  * }
  * </pre>
  * 
