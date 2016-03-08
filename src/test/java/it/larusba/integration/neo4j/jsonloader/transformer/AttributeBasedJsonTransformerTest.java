@@ -32,52 +32,52 @@ import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
  */
 public class AttributeBasedJsonTransformerTest {
 
-	@Test
-	public void shouldTransformJsonDocumentIntoACypherStatement() {
+  @Test
+  public void shouldTransformJsonDocumentIntoACypherStatement() {
 
-		try {
+    try {
 
-			JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
+      JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
 
-			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
+      String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
+      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+          JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
-			System.out.println(documentTransformer.transform(jsonDocument));
+      System.out.println(documentTransformer.transform(jsonDocument));
 
-		} catch (Exception e) {
+    } catch (Exception e) {
 
-			Assert.fail(e.getMessage());
-		}
-	}
+      Assert.fail(e.getMessage());
+    }
+  }
 
-	@Test
-	public void shouldTransformNestedJsonDocumentIntoACypherStatement() {
+  @Test
+  public void shouldTransformNestedJsonDocumentIntoACypherStatement() {
 
-		try {
+    try {
 
-			JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
+      JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
 
-			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
+      String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 
-			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
-			    + jsonAddressDocument + "}";
+      String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
+          + jsonAddressDocument + "}";
 
-			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + "}";
+      String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + "}";
 
-			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
-			    + jsonJobDocument + "}";
+      String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
+          + jsonJobDocument + "}";
 
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
+      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+          JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
-			System.out.println(documentTransformer.transform(jsonDocument));
+      System.out.println(documentTransformer.transform(jsonDocument));
 
-		} catch (Exception e) {
+    } catch (Exception e) {
 
-			Assert.fail(e.getMessage());
-		}
-	}
+      Assert.fail(e.getMessage());
+    }
+  }
 
 }

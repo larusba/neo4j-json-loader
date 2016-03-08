@@ -26,23 +26,23 @@ import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
  */
 public class JsonTransformerFactory {
 
-	public static final JsonTransformer<String> getInstance(JsonMappingStrategy graphMappingStrategy) {
+  public static final JsonTransformer<String> getInstance(JsonMappingStrategy graphMappingStrategy) {
 
-		if (graphMappingStrategy == null) {
-			throw new IllegalArgumentException("Mapping stategy cannot be null");
-		}
+    if (graphMappingStrategy == null) {
+      throw new IllegalArgumentException("Mapping stategy cannot be null");
+    }
 
-		switch (graphMappingStrategy) {
+    switch (graphMappingStrategy) {
 
-		case DOMAIN_DRIVEN:
-			throw new UnsupportedOperationException();
+    case DOMAIN_DRIVEN:
+      throw new UnsupportedOperationException();
 
-		case FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED:
-			throw new UnsupportedOperationException();
+    case FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED:
+      throw new UnsupportedOperationException();
 
-		default:
-			return new AttributeBasedJsonTransformer();
+    default:
+      return new AttributeBasedJsonTransformer();
 
-		}
-	}
+    }
+  }
 }

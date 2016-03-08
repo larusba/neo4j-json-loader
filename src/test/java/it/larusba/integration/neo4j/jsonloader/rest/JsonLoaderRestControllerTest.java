@@ -34,71 +34,71 @@ import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
  */
 public class JsonLoaderRestControllerTest {
 
-	@Test
-	public void shouldLoadJSONIntoGraph() throws Exception {
+  @Test
+  public void shouldLoadJSONIntoGraph() throws Exception {
 
-		try (ServerControls server = TestServerBuilders.newInProcessBuilder()
-		    .withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
+    try (ServerControls server = TestServerBuilders.newInProcessBuilder()
+        .withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
 
-			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
+      String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
+      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+          JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
-			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
+      HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
 
-			assertEquals(200, response.status());
+      assertEquals(200, response.status());
 
-			assertEquals(0, response.get("constraintsAdded").asInt());
-			assertEquals(0, response.get("constraintsRemoved").asInt());
-			assertEquals(0, response.get("containsUpdates").asInt());
-			assertEquals(0, response.get("indexesAdded").asInt());
-			assertEquals(0, response.get("indexesRemoved").asInt());
-			assertEquals(1, response.get("labelsAdded").asInt());
-			assertEquals(0, response.get("labelsRemoved").asInt());
-			assertEquals(1, response.get("nodesCreated").asInt());
-			assertEquals(0, response.get("nodesDeleted").asInt());
-			assertEquals(5, response.get("propertiesSet").asInt());
-			assertEquals(0, response.get("relationshipsCreated").asInt());
-			assertEquals(0, response.get("relationshipsDeleted").asInt());
-		}
-	}
+      assertEquals(0, response.get("constraintsAdded").asInt());
+      assertEquals(0, response.get("constraintsRemoved").asInt());
+      assertEquals(0, response.get("containsUpdates").asInt());
+      assertEquals(0, response.get("indexesAdded").asInt());
+      assertEquals(0, response.get("indexesRemoved").asInt());
+      assertEquals(1, response.get("labelsAdded").asInt());
+      assertEquals(0, response.get("labelsRemoved").asInt());
+      assertEquals(1, response.get("nodesCreated").asInt());
+      assertEquals(0, response.get("nodesDeleted").asInt());
+      assertEquals(5, response.get("propertiesSet").asInt());
+      assertEquals(0, response.get("relationshipsCreated").asInt());
+      assertEquals(0, response.get("relationshipsDeleted").asInt());
+    }
+  }
 
-	@Test
-	public void shouldLoadJSONWithNestedObjectsIntoGraph() throws Exception {
+  @Test
+  public void shouldLoadJSONWithNestedObjectsIntoGraph() throws Exception {
 
-		try (ServerControls server = TestServerBuilders.newInProcessBuilder()
-		    .withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
+    try (ServerControls server = TestServerBuilders.newInProcessBuilder()
+        .withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
 
-			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
+      String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 
-			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
-			    + jsonAddressDocument + "}";
+      String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
+          + jsonAddressDocument + "}";
 
-			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + "}";
+      String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + "}";
 
-			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
-			    + jsonJobDocument + "}";
+      String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
+          + jsonJobDocument + "}";
 
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
+      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+          JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
-			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
+      HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
 
-			assertEquals(200, response.status());
+      assertEquals(200, response.status());
 
-			assertEquals(0, response.get("constraintsAdded").asInt());
-			assertEquals(0, response.get("constraintsRemoved").asInt());
-			assertEquals(0, response.get("containsUpdates").asInt());
-			assertEquals(0, response.get("indexesAdded").asInt());
-			assertEquals(0, response.get("indexesRemoved").asInt());
-			assertEquals(4, response.get("labelsAdded").asInt());
-			assertEquals(0, response.get("labelsRemoved").asInt());
-			assertEquals(4, response.get("nodesCreated").asInt());
-			assertEquals(0, response.get("nodesDeleted").asInt());
-			assertEquals(15, response.get("propertiesSet").asInt());
-			assertEquals(3, response.get("relationshipsCreated").asInt());
-			assertEquals(0, response.get("relationshipsDeleted").asInt());
-		}
-	}
+      assertEquals(0, response.get("constraintsAdded").asInt());
+      assertEquals(0, response.get("constraintsRemoved").asInt());
+      assertEquals(0, response.get("containsUpdates").asInt());
+      assertEquals(0, response.get("indexesAdded").asInt());
+      assertEquals(0, response.get("indexesRemoved").asInt());
+      assertEquals(4, response.get("labelsAdded").asInt());
+      assertEquals(0, response.get("labelsRemoved").asInt());
+      assertEquals(4, response.get("nodesCreated").asInt());
+      assertEquals(0, response.get("nodesDeleted").asInt());
+      assertEquals(15, response.get("propertiesSet").asInt());
+      assertEquals(3, response.get("relationshipsCreated").asInt());
+      assertEquals(0, response.get("relationshipsDeleted").asInt());
+    }
+  }
 }

@@ -30,135 +30,135 @@ import org.neo4j.graphdb.QueryStatistics;
 @XmlRootElement
 public class JsonLoaderStatistics implements QueryStatistics {
 
-	private int nodesCreated;
-	private int nodesDeleted;
-	private int relationshipsCreated;
-	private int relationshipsDeleted;
-	private int propertiesSet;
-	private int labelsAdded;
-	private int labelsRemoved;
-	private int indexesAdded;
-	private int indexesRemoved;
-	private int constraintsAdded;
-	private int constraintsRemoved;
-	private boolean containsUpdates;
+  private int nodesCreated;
+  private int nodesDeleted;
+  private int relationshipsCreated;
+  private int relationshipsDeleted;
+  private int propertiesSet;
+  private int labelsAdded;
+  private int labelsRemoved;
+  private int indexesAdded;
+  private int indexesRemoved;
+  private int constraintsAdded;
+  private int constraintsRemoved;
+  private boolean containsUpdates;
 
-	public JsonLoaderStatistics() {
-	}
+  public JsonLoaderStatistics() {
+  }
 
-	public JsonLoaderStatistics(QueryStatistics queryStatistics) {
-		this.nodesCreated = queryStatistics.getNodesCreated();
-		this.nodesDeleted = queryStatistics.getNodesDeleted();
-		this.relationshipsCreated = queryStatistics.getRelationshipsCreated();
-		this.relationshipsDeleted = queryStatistics.getRelationshipsDeleted();
-		this.propertiesSet = queryStatistics.getPropertiesSet();
-		this.labelsAdded = queryStatistics.getLabelsAdded();
-		this.labelsRemoved = queryStatistics.getLabelsRemoved();
-		this.indexesAdded = queryStatistics.getIndexesAdded();
-		this.indexesRemoved = queryStatistics.getIndexesRemoved();
-		this.constraintsAdded = queryStatistics.getConstraintsAdded();
-		this.constraintsRemoved = queryStatistics.getConstraintsRemoved();
-		this.containsUpdates = queryStatistics.containsUpdates();
-	}
+  public JsonLoaderStatistics(QueryStatistics queryStatistics) {
+    this.nodesCreated = queryStatistics.getNodesCreated();
+    this.nodesDeleted = queryStatistics.getNodesDeleted();
+    this.relationshipsCreated = queryStatistics.getRelationshipsCreated();
+    this.relationshipsDeleted = queryStatistics.getRelationshipsDeleted();
+    this.propertiesSet = queryStatistics.getPropertiesSet();
+    this.labelsAdded = queryStatistics.getLabelsAdded();
+    this.labelsRemoved = queryStatistics.getLabelsRemoved();
+    this.indexesAdded = queryStatistics.getIndexesAdded();
+    this.indexesRemoved = queryStatistics.getIndexesRemoved();
+    this.constraintsAdded = queryStatistics.getConstraintsAdded();
+    this.constraintsRemoved = queryStatistics.getConstraintsRemoved();
+    this.containsUpdates = queryStatistics.containsUpdates();
+  }
 
-	public int getNodesCreated() {
-		return nodesCreated;
-	}
+  public int getNodesCreated() {
+    return nodesCreated;
+  }
 
-	public void setNodesCreated(int nodesCreated) {
-		this.nodesCreated = nodesCreated;
-	}
+  public void setNodesCreated(int nodesCreated) {
+    this.nodesCreated = nodesCreated;
+  }
 
-	public int getNodesDeleted() {
-		return nodesDeleted;
-	}
+  public int getNodesDeleted() {
+    return nodesDeleted;
+  }
 
-	public void setNodesDeleted(int nodesDeleted) {
-		this.nodesDeleted = nodesDeleted;
-	}
+  public void setNodesDeleted(int nodesDeleted) {
+    this.nodesDeleted = nodesDeleted;
+  }
 
-	public int getRelationshipsCreated() {
-		return relationshipsCreated;
-	}
+  public int getRelationshipsCreated() {
+    return relationshipsCreated;
+  }
 
-	public void setRelationshipsCreated(int relationshipsCreated) {
-		this.relationshipsCreated = relationshipsCreated;
-	}
+  public void setRelationshipsCreated(int relationshipsCreated) {
+    this.relationshipsCreated = relationshipsCreated;
+  }
 
-	public int getRelationshipsDeleted() {
-		return relationshipsDeleted;
-	}
+  public int getRelationshipsDeleted() {
+    return relationshipsDeleted;
+  }
 
-	public void setRelationshipsDeleted(int relationshipsDeleted) {
-		this.relationshipsDeleted = relationshipsDeleted;
-	}
+  public void setRelationshipsDeleted(int relationshipsDeleted) {
+    this.relationshipsDeleted = relationshipsDeleted;
+  }
 
-	public int getPropertiesSet() {
-		return propertiesSet;
-	}
+  public int getPropertiesSet() {
+    return propertiesSet;
+  }
 
-	public void setPropertiesSet(int propertiesSet) {
-		this.propertiesSet = propertiesSet;
-	}
+  public void setPropertiesSet(int propertiesSet) {
+    this.propertiesSet = propertiesSet;
+  }
 
-	public int getLabelsAdded() {
-		return labelsAdded;
-	}
+  public int getLabelsAdded() {
+    return labelsAdded;
+  }
 
-	public void setLabelsAdded(int labelsAdded) {
-		this.labelsAdded = labelsAdded;
-	}
+  public void setLabelsAdded(int labelsAdded) {
+    this.labelsAdded = labelsAdded;
+  }
 
-	public int getLabelsRemoved() {
-		return labelsRemoved;
-	}
+  public int getLabelsRemoved() {
+    return labelsRemoved;
+  }
 
-	public void setLabelsRemoved(int labelsRemoved) {
-		this.labelsRemoved = labelsRemoved;
-	}
+  public void setLabelsRemoved(int labelsRemoved) {
+    this.labelsRemoved = labelsRemoved;
+  }
 
-	public int getIndexesAdded() {
-		return indexesAdded;
-	}
+  public int getIndexesAdded() {
+    return indexesAdded;
+  }
 
-	public void setIndexesAdded(int indexesAdded) {
-		this.indexesAdded = indexesAdded;
-	}
+  public void setIndexesAdded(int indexesAdded) {
+    this.indexesAdded = indexesAdded;
+  }
 
-	public int getIndexesRemoved() {
-		return indexesRemoved;
-	}
+  public int getIndexesRemoved() {
+    return indexesRemoved;
+  }
 
-	public void setIndexesRemoved(int indexesRemoved) {
-		this.indexesRemoved = indexesRemoved;
-	}
+  public void setIndexesRemoved(int indexesRemoved) {
+    this.indexesRemoved = indexesRemoved;
+  }
 
-	public int getConstraintsAdded() {
-		return constraintsAdded;
-	}
+  public int getConstraintsAdded() {
+    return constraintsAdded;
+  }
 
-	public void setConstraintsAdded(int constraintsAdded) {
-		this.constraintsAdded = constraintsAdded;
-	}
+  public void setConstraintsAdded(int constraintsAdded) {
+    this.constraintsAdded = constraintsAdded;
+  }
 
-	public int getConstraintsRemoved() {
-		return constraintsRemoved;
-	}
+  public int getConstraintsRemoved() {
+    return constraintsRemoved;
+  }
 
-	public void setConstraintsRemoved(int constraintsRemoved) {
-		this.constraintsRemoved = constraintsRemoved;
-	}
+  public void setConstraintsRemoved(int constraintsRemoved) {
+    this.constraintsRemoved = constraintsRemoved;
+  }
 
-	@JsonIgnore
-	public boolean containsUpdates() {
-		return getContainsUpdates();
-	}
+  @JsonIgnore
+  public boolean containsUpdates() {
+    return getContainsUpdates();
+  }
 
-	public boolean getContainsUpdates() {
-		return containsUpdates;
-	}
+  public boolean getContainsUpdates() {
+    return containsUpdates;
+  }
 
-	public void setContainsUpdates(boolean containsUpdates) {
-		this.containsUpdates = containsUpdates;
-	}
+  public void setContainsUpdates(boolean containsUpdates) {
+    this.containsUpdates = containsUpdates;
+  }
 }

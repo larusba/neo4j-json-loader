@@ -28,63 +28,63 @@ import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
  */
 public class JsonDocument {
 
-	private String id;
-	private String type;
-	private String content;
+  private String id;
+  private String type;
+  private String content;
 
-	private JsonMappingStrategy mappingStrategy;
+  private JsonMappingStrategy mappingStrategy;
 
-	private List<JsonObjectDescriptor> objectDescriptors;
+  private List<JsonObjectDescriptor> objectDescriptors;
 
-	public JsonDocument() {
-	}
+  public JsonDocument() {
+  }
 
-	public JsonDocument(String id, String type, String content, JsonMappingStrategy mappingStrategy,
-	    List<JsonObjectDescriptor> objectDescriptors) {
-		this.id = id;
-		this.type = type;
-		this.content = content;
-		this.mappingStrategy = mappingStrategy;
-		this.objectDescriptors = objectDescriptors;
-	}
+  public JsonDocument(String id, String type, String content, JsonMappingStrategy mappingStrategy,
+      List<JsonObjectDescriptor> objectDescriptors) {
+    this.id = id;
+    this.type = type;
+    this.content = content;
+    this.mappingStrategy = mappingStrategy;
+    this.objectDescriptors = objectDescriptors;
+  }
 
-	public String getId() {
-		return id;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  public void setId(String id) {
+    this.id = id;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public String getContent() {
-		return content;
-	}
+  public String getContent() {
+    return content;
+  }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+  public void setContent(String content) {
+    this.content = content;
+  }
 
-	public JsonMappingStrategy getMappingStrategy() {
-		return mappingStrategy;
-	}
+  public JsonMappingStrategy getMappingStrategy() {
+    return mappingStrategy;
+  }
 
-	public void setMappingStrategy(JsonMappingStrategy mappingStrategy) {
-		this.mappingStrategy = mappingStrategy;
-	}
+  public void setMappingStrategy(JsonMappingStrategy mappingStrategy) {
+    this.mappingStrategy = mappingStrategy;
+  }
 
-	public List<JsonObjectDescriptor> getObjectDescriptors() {
-		return objectDescriptors;
-	}
+  public List<JsonObjectDescriptor> getObjectDescriptors() {
+    return objectDescriptors;
+  }
 
-	public void setObjectDescriptors(List<JsonObjectDescriptor> objectDescriptors) {
-		this.objectDescriptors = objectDescriptors;
-	}
+  public void setObjectDescriptors(List<JsonObjectDescriptor> objectDescriptors) {
+    this.objectDescriptors = objectDescriptors;
+  }
 }

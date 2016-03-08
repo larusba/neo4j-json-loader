@@ -43,41 +43,41 @@ import it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService;
 @Path("/")
 public class JsonLoaderRestController {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(JsonLoaderRestController.class);
+  private static Logger LOGGER = LoggerFactory.getLogger(JsonLoaderRestController.class);
 
-	private final GraphDatabaseService graphDatabaseService;
+  private final GraphDatabaseService graphDatabaseService;
 
-	public JsonLoaderRestController(@Context GraphDatabaseService graphDatabaseService) {
-		this.graphDatabaseService = graphDatabaseService;
-	}
+  public JsonLoaderRestController(@Context GraphDatabaseService graphDatabaseService) {
+    this.graphDatabaseService = graphDatabaseService;
+  }
 
-	@PUT
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response loadJSON(JAXBElement<JsonDocument> jsonDocumentWrapper) {
+  @PUT
+  @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+  public Response loadJSON(JAXBElement<JsonDocument> jsonDocumentWrapper) {
 
-		try {
+    try {
 
-			JsonDocument jsonDocument = jsonDocumentWrapper.getValue();
+      JsonDocument jsonDocument = jsonDocumentWrapper.getValue();
 
-			LOGGER.info("PUT /");
-			LOGGER.info("");
-			LOGGER.info("document id: " + jsonDocument.getId());
-			LOGGER.info("document type: " + jsonDocument.getType());
-			LOGGER.info("document: " + jsonDocument.getContent());
-			LOGGER.info("mapping strategy: " + jsonDocument.getMappingStrategy());
+      LOGGER.info("PUT /");
+      LOGGER.info("");
+      LOGGER.info("document id: " + jsonDocument.getId());
+      LOGGER.info("document type: " + jsonDocument.getType());
+      LOGGER.info("document: " + jsonDocument.getContent());
+      LOGGER.info("mapping strategy: " + jsonDocument.getMappingStrategy());
 
-			JsonLoaderService loaderService = new DefaultJsonLoaderService(this.graphDatabaseService);
+      JsonLoaderService loaderService = new DefaultJsonLoaderService(this.graphDatabaseService);
 
-			QueryStatistics queryStatistics = loaderService.save(jsonDocument);
+      QueryStatistics queryStatistics = loaderService.save(jsonDocument);
 
-			return Response.ok(queryStatistics).build();
+      return Response.ok(queryStatistics).build();
 
-		} catch (Exception e) {
+    } catch (Exception e) {
 
-			LOGGER.error("Error parsing JSON document", e);
+      LOGGER.error("Error parsing JSON document", e);
 
-			return Response.status(Status.BAD_REQUEST).entity("Error parsing JSON document. Reason: " + e.getMessage())
-			    .build();
-		}
-	}
+      return Response.status(Status.BAD_REQUEST).entity("Error parsing JSON document. Reason: " + e.getMessage())
+          .build();
+    }
+  }
 }

@@ -108,129 +108,129 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  */
 public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 
-	/**
-	 * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(it.larusba.integration.neo4j.jsonloader.bean.JsonDocument)
-	 */
-	@Override
-	public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
+  /**
+   * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(it.larusba.integration.neo4j.jsonloader.bean.JsonDocument)
+   */
+  @Override
+  public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
-		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
-		    new TypeReference<Map<String, Object>>() {
-		    });
+    Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
+        new TypeReference<Map<String, Object>>() {
+        });
 
-		JsonObjectDescriptorHelper jsonObjectDescriptorHelper = new JsonObjectDescriptorHelper(
-		    jsonDocument.getObjectDescriptors());
+    JsonObjectDescriptorHelper jsonObjectDescriptorHelper = new JsonObjectDescriptorHelper(
+        jsonDocument.getObjectDescriptors());
 
-		return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper);
-	}
+    return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper);
+  }
 
-	/**
-	 * TODO we still don't use
-	 * <code>objectDescriptorHelper.getTypeAttribute</code> to properly set node
-	 * <code>Labels</code>.
-	 * <p/>
-	 * 
-	 * @param documentId
-	 * @param documentType
-	 * @param documentMap
-	 * @param objectDescriptors
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	private String transform(String documentId, String documentType, Map<String, Object> documentMap,
-	    JsonObjectDescriptorHelper objectDescriptorHelper) {
+  /**
+   * TODO we still don't use
+   * <code>objectDescriptorHelper.getTypeAttribute</code> to properly set node
+   * <code>Labels</code>.
+   * <p/>
+   * 
+   * @param documentId
+   * @param documentType
+   * @param documentMap
+   * @param objectDescriptors
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  private String transform(String documentId, String documentType, Map<String, Object> documentMap,
+      JsonObjectDescriptorHelper objectDescriptorHelper) {
 
-		StringBuffer rootNode = new StringBuffer();
-		List<String> childNodes = new ArrayList<String>();
-		List<String> childRelationships = new ArrayList<String>();
+    StringBuffer rootNode = new StringBuffer();
+    List<String> childNodes = new ArrayList<String>();
+    List<String> childRelationships = new ArrayList<String>();
 
-		String nodeReference = (documentType != null) ? StringUtils.lowerCase(documentType) : "document";
-		String nodeLabel = StringUtils.capitalize(nodeReference);
+    String nodeReference = (documentType != null) ? StringUtils.lowerCase(documentType) : "document";
+    String nodeLabel = StringUtils.capitalize(nodeReference);
 
-		rootNode.append("MERGE (").append(nodeReference).append(":").append(nodeLabel);
+    rootNode.append("MERGE (").append(nodeReference).append(":").append(nodeLabel);
 
-		StringBuffer nodeAttributes = new StringBuffer();
+    StringBuffer nodeAttributes = new StringBuffer();
 
-		boolean firstAttr = true;
-		boolean firstUniqueAttr = true;
+    boolean firstAttr = true;
+    boolean firstUniqueAttr = true;
 
-		for (String attributeName : documentMap.keySet()) {
+    for (String attributeName : documentMap.keySet()) {
 
-			Object attributeValue = documentMap.get(attributeName);
+      Object attributeValue = documentMap.get(attributeName);
 
-			if (attributeValue instanceof Map) {
+      if (attributeValue instanceof Map) {
 
-				childNodes
-				    .add(transform(documentId, attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper));
+        childNodes
+            .add(transform(documentId, attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper));
 
-				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
-				    .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
-				    .append(attributeName).append(")").toString());
-			} else {
+        childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
+            .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
+            .append(attributeName).append(")").toString());
+      } else {
 
-				if (objectDescriptorHelper.getUniqueKeyAttributes(nodeLabel).contains(attributeName)) {
+        if (objectDescriptorHelper.getUniqueKeyAttributes(nodeLabel).contains(attributeName)) {
 
-					if (firstUniqueAttr) {
-						rootNode.append(" { ");
+          if (firstUniqueAttr) {
+            rootNode.append(" { ");
 
-						firstUniqueAttr = false;
-					} else {
-						rootNode.append(", ");
-					}
+            firstUniqueAttr = false;
+          } else {
+            rootNode.append(", ");
+          }
 
-					rootNode.append(attributeName).append(": ");
+          rootNode.append(attributeName).append(": ");
 
-					if (attributeValue instanceof String) {
-						rootNode.append("'").append(attributeValue).append("'");
-					} else {
-						rootNode.append(attributeValue);
-					}
+          if (attributeValue instanceof String) {
+            rootNode.append("'").append(attributeValue).append("'");
+          } else {
+            rootNode.append(attributeValue);
+          }
 
-				} else {
+        } else {
 
-					if (attributeValue != null) {
+          if (attributeValue != null) {
 
-						if (firstAttr) {
-							nodeAttributes.append("ON CREATE SET ");
+            if (firstAttr) {
+              nodeAttributes.append("ON CREATE SET ");
 
-							if (documentId != null) {
-								nodeAttributes.append(nodeReference).append(".").append("_documentId = '").append(documentId)
-								    .append("', ");
-							}
+              if (documentId != null) {
+                nodeAttributes.append(nodeReference).append(".").append("_documentId = '").append(documentId)
+                    .append("', ");
+              }
 
-							firstAttr = false;
-						} else {
-							nodeAttributes.append(", ");
-						}
+              firstAttr = false;
+            } else {
+              nodeAttributes.append(", ");
+            }
 
-						nodeAttributes.append(nodeReference).append(".").append(attributeName).append(" = ");
+            nodeAttributes.append(nodeReference).append(".").append(attributeName).append(" = ");
 
-						if (attributeValue instanceof String) {
-							nodeAttributes.append("'").append(attributeValue).append("'");
-						} else {
-							nodeAttributes.append(attributeValue);
-						}
-					}
-				}
-			}
-		}
+            if (attributeValue instanceof String) {
+              nodeAttributes.append("'").append(attributeValue).append("'");
+            } else {
+              nodeAttributes.append(attributeValue);
+            }
+          }
+        }
+      }
+    }
 
-		rootNode.append(" })").append("\n").append(nodeAttributes);
+    rootNode.append(" })").append("\n").append(nodeAttributes);
 
-		StringBuffer cypher = new StringBuffer();
+    StringBuffer cypher = new StringBuffer();
 
-		cypher.append(rootNode);
+    cypher.append(rootNode);
 
-		for (String childNode : childNodes) {
+    for (String childNode : childNodes) {
 
-			cypher.append("\n").append(childNode);
-		}
+      cypher.append("\n").append(childNode);
+    }
 
-		for (String childRelationship : childRelationships) {
+    for (String childRelationship : childRelationships) {
 
-			cypher.append("\n").append(childRelationship);
-		}
+      cypher.append("\n").append(childRelationship);
+    }
 
-		return cypher.toString();
-	}
+    return cypher.toString();
+  }
 }

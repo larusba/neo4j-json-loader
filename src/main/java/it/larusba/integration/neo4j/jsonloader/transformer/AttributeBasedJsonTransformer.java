@@ -72,96 +72,96 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
  */
 public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 
-	/**
-	 * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
-	 *      java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
+  /**
+   * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
+   *      java.lang.String, java.lang.String)
+   */
+  @Override
+  public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
-		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
-		    new TypeReference<Map<String, Object>>() {
-		    });
+    Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
+        new TypeReference<Map<String, Object>>() {
+        });
 
-		return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap);
-	}
+    return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap);
+  }
 
-	/**
-	 * It recursively parses a <code>Map</code> representation of the JSON
-	 * document.
-	 * 
-	 * @param documentId
-	 * @param documentType
-	 * @param documentMap
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public String transform(String documentId, String documentType, Map<String, Object> documentMap) {
+  /**
+   * It recursively parses a <code>Map</code> representation of the JSON
+   * document.
+   * 
+   * @param documentId
+   * @param documentType
+   * @param documentMap
+   * @return
+   */
+  @SuppressWarnings("unchecked")
+  public String transform(String documentId, String documentType, Map<String, Object> documentMap) {
 
-		StringBuffer rootNode = new StringBuffer();
-		List<String> childNodes = new ArrayList<String>();
-		List<String> childRelationships = new ArrayList<String>();
+    StringBuffer rootNode = new StringBuffer();
+    List<String> childNodes = new ArrayList<String>();
+    List<String> childRelationships = new ArrayList<String>();
 
-		String nodeReference = (documentType != null) ? StringUtils.lowerCase(documentType) : "document";
-		String nodeLabel = StringUtils.capitalize(nodeReference);
+    String nodeReference = (documentType != null) ? StringUtils.lowerCase(documentType) : "document";
+    String nodeLabel = StringUtils.capitalize(nodeReference);
 
-		rootNode.append("CREATE (").append(nodeReference).append(":").append(nodeLabel);
+    rootNode.append("CREATE (").append(nodeReference).append(":").append(nodeLabel);
 
-		boolean firstAttr = true;
+    boolean firstAttr = true;
 
-		for (String attributeName : documentMap.keySet()) {
+    for (String attributeName : documentMap.keySet()) {
 
-			Object attributeValue = documentMap.get(attributeName);
+      Object attributeValue = documentMap.get(attributeName);
 
-			if (attributeValue instanceof Map) {
+      if (attributeValue instanceof Map) {
 
-				childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
+        childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
 
-				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
-				    .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
-				    .append(attributeName).append(")").toString());
-			} else {
+        childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
+            .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
+            .append(attributeName).append(")").toString());
+      } else {
 
-				if (firstAttr) {
-					rootNode.append(" { ");
+        if (firstAttr) {
+          rootNode.append(" { ");
 
-					if (documentId != null) {
-						rootNode.append("_documentId: '").append(documentId).append("', ");
-					}
+          if (documentId != null) {
+            rootNode.append("_documentId: '").append(documentId).append("', ");
+          }
 
-					firstAttr = false;
-				} else {
-					rootNode.append(", ");
-				}
+          firstAttr = false;
+        } else {
+          rootNode.append(", ");
+        }
 
-				if (attributeValue != null) {
-					rootNode.append(attributeName).append(": ");
+        if (attributeValue != null) {
+          rootNode.append(attributeName).append(": ");
 
-					if (attributeValue instanceof String) {
-						rootNode.append("'").append(attributeValue).append("'");
-					} else {
-						rootNode.append(attributeValue);
-					}
-				}
-			}
-		}
+          if (attributeValue instanceof String) {
+            rootNode.append("'").append(attributeValue).append("'");
+          } else {
+            rootNode.append(attributeValue);
+          }
+        }
+      }
+    }
 
-		rootNode.append(" })");
+    rootNode.append(" })");
 
-		StringBuffer cypher = new StringBuffer();
+    StringBuffer cypher = new StringBuffer();
 
-		cypher.append(rootNode);
+    cypher.append(rootNode);
 
-		for (String childNode : childNodes) {
+    for (String childNode : childNodes) {
 
-			cypher.append("\n").append(childNode);
-		}
+      cypher.append("\n").append(childNode);
+    }
 
-		for (String childRelationship : childRelationships) {
+    for (String childRelationship : childRelationships) {
 
-			cypher.append("\n").append(childRelationship);
-		}
+      cypher.append("\n").append(childRelationship);
+    }
 
-		return cypher.toString();
-	}
+    return cypher.toString();
+  }
 }

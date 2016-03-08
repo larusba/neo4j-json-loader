@@ -34,14 +34,14 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
  */
 public interface JsonTransformer<T> {
 
-	/**
-	 * @param jsonDocument
-	 *          the object wrapper containing all the directives to trasform the
-	 *          embedded JSON document
-	 * @return the generated cypher statement
-	 * @throws IOException
-	 * @throws JsonMappingException
-	 * @throws JsonParseException
-	 */
-	T transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException;
+  /**
+   * @param jsonDocument
+   *          the object wrapper containing all the directives to trasform the
+   *          embedded JSON document
+   * @return the generated cypher statement
+   * @throws IOException
+   * @throws JsonMappingException
+   * @throws JsonParseException
+   */
+  T transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException;
 }

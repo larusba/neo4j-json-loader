@@ -26,42 +26,42 @@ import java.util.List;
  */
 public class JsonObjectDescriptor {
 
-	private String entityName;
+  private String entityName;
 
-	private List<String> uniqueKeyAttributes;
+  private List<String> uniqueKeyAttributes;
 
-	private String typeAttribute;
+  private String typeAttribute;
 
-	public JsonObjectDescriptor() {
-	}
+  public JsonObjectDescriptor() {
+  }
 
-	public JsonObjectDescriptor(String entityName, List<String> uniqueKeyAttributes, String typeAttribute) {
-		this.entityName = entityName;
-		this.uniqueKeyAttributes = uniqueKeyAttributes;
-		this.typeAttribute = typeAttribute;
-	}
+  public JsonObjectDescriptor(String entityName, List<String> uniqueKeyAttributes, String typeAttribute) {
+    this.entityName = entityName;
+    this.uniqueKeyAttributes = uniqueKeyAttributes;
+    this.typeAttribute = typeAttribute;
+  }
 
-	public String getEntityName() {
-		return entityName;
-	}
+  public String getEntityName() {
+    return entityName;
+  }
 
-	public void setEntityName(String entityName) {
-		this.entityName = entityName;
-	}
+  public void setEntityName(String entityName) {
+    this.entityName = entityName;
+  }
 
-	public List<String> getUniqueKeyAttributes() {
-		return uniqueKeyAttributes;
-	}
+  public List<String> getUniqueKeyAttributes() {
+    return uniqueKeyAttributes;
+  }
 
-	public void setUniqueKeyAttributes(List<String> uniqueAttributes) {
-		this.uniqueKeyAttributes = uniqueAttributes;
-	}
+  public void setUniqueKeyAttributes(List<String> uniqueAttributes) {
+    this.uniqueKeyAttributes = uniqueAttributes;
+  }
 
-	public String getTypeAttribute() {
-		return typeAttribute;
-	}
+  public String getTypeAttribute() {
+    return typeAttribute;
+  }
 
-	public void setTypeAttribute(String typeAttribute) {
-		this.typeAttribute = typeAttribute;
-	}
+  public void setTypeAttribute(String typeAttribute) {
+    this.typeAttribute = typeAttribute;
+  }
 }

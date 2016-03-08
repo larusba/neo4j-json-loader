@@ -31,51 +31,51 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
  */
 public class JsonObjectDescriptorHelper {
 
-	private List<String> entityNames;
-	private Map<String, String> entityTypeAttributeMap;
-	private Map<String, List<String>> entityUniqueKeyAttributesMap;
+  private List<String> entityNames;
+  private Map<String, String> entityTypeAttributeMap;
+  private Map<String, List<String>> entityUniqueKeyAttributesMap;
 
-	public JsonObjectDescriptorHelper(List<JsonObjectDescriptor> objectDescriptors) {
+  public JsonObjectDescriptorHelper(List<JsonObjectDescriptor> objectDescriptors) {
 
-		init(objectDescriptors);
-	}
+    init(objectDescriptors);
+  }
 
-	private void init(List<JsonObjectDescriptor> objectDescriptors) {
+  private void init(List<JsonObjectDescriptor> objectDescriptors) {
 
-		if (objectDescriptors != null) {
+    if (objectDescriptors != null) {
 
-			this.entityNames = new ArrayList<String>();
-			this.entityTypeAttributeMap = new HashMap<String, String>();
-			this.entityUniqueKeyAttributesMap = new HashMap<String, List<String>>();
+      this.entityNames = new ArrayList<String>();
+      this.entityTypeAttributeMap = new HashMap<String, String>();
+      this.entityUniqueKeyAttributesMap = new HashMap<String, List<String>>();
 
-			for (JsonObjectDescriptor jsonObjectDescriptor : objectDescriptors) {
+      for (JsonObjectDescriptor jsonObjectDescriptor : objectDescriptors) {
 
-				String entityName = jsonObjectDescriptor.getEntityName();
+        String entityName = jsonObjectDescriptor.getEntityName();
 
-				this.entityNames.add(entityName);
-				this.entityTypeAttributeMap.put(entityName, jsonObjectDescriptor.getTypeAttribute());
-				this.entityUniqueKeyAttributesMap.put(entityName, jsonObjectDescriptor.getUniqueKeyAttributes());
-			}
-		}
-	}
+        this.entityNames.add(entityName);
+        this.entityTypeAttributeMap.put(entityName, jsonObjectDescriptor.getTypeAttribute());
+        this.entityUniqueKeyAttributesMap.put(entityName, jsonObjectDescriptor.getUniqueKeyAttributes());
+      }
+    }
+  }
 
-	public List<String> getEntityNames() {
-		return entityNames;
-	}
+  public List<String> getEntityNames() {
+    return entityNames;
+  }
 
-	public String getTypeAttribute(String entityName) {
-		return this.entityTypeAttributeMap.get(entityName);
-	}
+  public String getTypeAttribute(String entityName) {
+    return this.entityTypeAttributeMap.get(entityName);
+  }
 
-	public List<String> getUniqueKeyAttributes(String entityName) {
-		return this.entityUniqueKeyAttributesMap.get(entityName);
-	}
+  public List<String> getUniqueKeyAttributes(String entityName) {
+    return this.entityUniqueKeyAttributesMap.get(entityName);
+  }
 
-	public Map<String, String> getEntityTypeAttributeMap() {
-		return entityTypeAttributeMap;
-	}
+  public Map<String, String> getEntityTypeAttributeMap() {
+    return entityTypeAttributeMap;
+  }
 
-	public Map<String, List<String>> getEntityUniqueKeyAttributesMap() {
-		return entityUniqueKeyAttributesMap;
-	}
+  public Map<String, List<String>> getEntityUniqueKeyAttributesMap() {
+    return entityUniqueKeyAttributesMap;
+  }
 }

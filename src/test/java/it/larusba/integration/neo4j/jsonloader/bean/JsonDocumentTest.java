@@ -33,24 +33,24 @@ import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
  */
 public class JsonDocumentTest {
 
-	@Test
-	public void shouldSerializeJsonDocument() {
+  @Test
+  public void shouldSerializeJsonDocument() {
 
-		JsonDocument jsonDocument = new JsonDocument();
+    JsonDocument jsonDocument = new JsonDocument();
 
-		String jsonContent = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
+    String jsonContent = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
-		List<JsonObjectDescriptor> objectDescriptors = new ArrayList<JsonObjectDescriptor>();
-		JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
-		    Arrays.asList("firstName", "lastname"), null);
-		objectDescriptors.add(personObjectDescriptor);
+    List<JsonObjectDescriptor> objectDescriptors = new ArrayList<JsonObjectDescriptor>();
+    JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
+        Arrays.asList("firstName", "lastname"), null);
+    objectDescriptors.add(personObjectDescriptor);
 
-		jsonDocument.setId("1234567890QWERTY");
-		jsonDocument.setType("Person");
-		jsonDocument.setContent(jsonContent);
-		jsonDocument.setMappingStrategy(JsonMappingStrategy.DOMAIN_DRIVEN);
-		jsonDocument.setObjectDescriptors(objectDescriptors);
+    jsonDocument.setId("1234567890QWERTY");
+    jsonDocument.setType("Person");
+    jsonDocument.setContent(jsonContent);
+    jsonDocument.setMappingStrategy(JsonMappingStrategy.DOMAIN_DRIVEN);
+    jsonDocument.setObjectDescriptors(objectDescriptors);
 
-		System.out.println(JsonHelper.createJsonFrom(jsonDocument));
-	}
+    System.out.println(JsonHelper.createJsonFrom(jsonDocument));
+  }
 }

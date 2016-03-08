@@ -25,71 +25,71 @@ package it.larusba.integration.neo4j.jsonloader.mapping;
  */
 public enum JsonMappingStrategy {
 
-	/**
-	 * Domain agnostic approach: we don't provide any information about domain
-	 * entities and the set of attributes that uniquely identify their instances.
-	 * <p/>
-	 * When primitive, JSON attributes become node properties and their names are
-	 * used as property names.<br/>
-	 * When object, JSON attributes become new nodes (in a recursive fashion)
-	 * connected to their own father node.
-	 * <p/>
-	 * As an example, the following JSON document
-	 * 
-	 * <pre>
-	 * Person: {
-	 *   "firstname": "Lorenzo",
-	 *   "lastname": "Speranzoni",
-	 *   "age": 41,
-	 *   "job":
-	 *   {
-	 *   	"role": "CEO",
-	 *   	"company": "LARUS Business Automation"
-	 *   }
-	 * }
-	 * </pre>
-	 * 
-	 * will be translated into this sub-graph:
-	 * 
-	 * <pre>
-	 * (:Person { "firstname": "Lorenzo", ... } )-[:PERSON_JOB]->(:JOB { "role": "CEO", .... })
-	 * </pre>
-	 */
-	ATTRIBUTE_BASED("attribute"),
+  /**
+   * Domain agnostic approach: we don't provide any information about domain
+   * entities and the set of attributes that uniquely identify their instances.
+   * <p/>
+   * When primitive, JSON attributes become node properties and their names are
+   * used as property names.<br/>
+   * When object, JSON attributes become new nodes (in a recursive fashion)
+   * connected to their own father node.
+   * <p/>
+   * As an example, the following JSON document
+   * 
+   * <pre>
+   * Person: {
+   *   "firstname": "Lorenzo",
+   *   "lastname": "Speranzoni",
+   *   "age": 41,
+   *   "job":
+   *   {
+   *   	"role": "CEO",
+   *   	"company": "LARUS Business Automation"
+   *   }
+   * }
+   * </pre>
+   * 
+   * will be translated into this sub-graph:
+   * 
+   * <pre>
+   * (:Person { "firstname": "Lorenzo", ... } )-[:PERSON_JOB]->(:JOB { "role": "CEO", .... })
+   * </pre>
+   */
+  ATTRIBUTE_BASED("attribute"),
 
-	/**
-	 * This option allow us to instruct the transformer about how the domain is
-	 * defined.</br>
-	 */
-	DOMAIN_DRIVEN("domain"),
+  /**
+   * This option allow us to instruct the transformer about how the domain is
+   * defined.</br>
+   */
+  DOMAIN_DRIVEN("domain"),
 
-	/**
-	 * Super flexible future implementation about transformation rules.
-	 * Unfortunately it hasn't been invented yet. :-)
-	 */
-	FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED("tbd");
+  /**
+   * Super flexible future implementation about transformation rules.
+   * Unfortunately it hasn't been invented yet. :-)
+   */
+  FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED("tbd");
 
-	private String mappingStrategy;
+  private String mappingStrategy;
 
-	JsonMappingStrategy(String mappingStrategy) {
-		this.mappingStrategy = mappingStrategy;
-	}
+  JsonMappingStrategy(String mappingStrategy) {
+    this.mappingStrategy = mappingStrategy;
+  }
 
-	public String getMappingStrategy() {
-		return mappingStrategy;
-	}
+  public String getMappingStrategy() {
+    return mappingStrategy;
+  }
 
-	public static JsonMappingStrategy toEnum(String mappingStrategy) {
-		for (JsonMappingStrategy value : JsonMappingStrategy.values()) {
-			if (value.toString().equals(mappingStrategy)) {
-				return value;
-			}
-		}
-		return ATTRIBUTE_BASED;
-	}
+  public static JsonMappingStrategy toEnum(String mappingStrategy) {
+    for (JsonMappingStrategy value : JsonMappingStrategy.values()) {
+      if (value.toString().equals(mappingStrategy)) {
+        return value;
+      }
+    }
+    return ATTRIBUTE_BASED;
+  }
 
-	@Override
-	public String toString() {
-		return this.mappingStrategy;
-	}
+  @Override
+  public String toString() {
+    return this.mappingStrategy;
+  }
 }
