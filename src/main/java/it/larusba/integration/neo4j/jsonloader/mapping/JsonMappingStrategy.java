@@ -27,11 +27,10 @@ public enum JsonMappingStrategy {
 
 	/**
 	 * Domain agnostic approach: we don't provide any information about domain
-	 * entities and the set of attributes that uniquely identify their
-	 * instances.
+	 * entities and the set of attributes that uniquely identify their instances.
 	 * <p/>
-	 * When primitive, JSON attributes become node properties and their names
-	 * are used as property names.<br/>
+	 * When primitive, JSON attributes become node properties and their names are
+	 * used as property names.<br/>
 	 * When object, JSON attributes become new nodes (in a recursive fashion)
 	 * connected to their own father node.
 	 * <p/>

@@ -43,6 +43,7 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
  * connected to their own father node.</li>
  * </ul>
  * As an example, the following JSON document
+ * 
  * <pre>
  * Person: {
  *   "firstname" : "Lorenzo",
@@ -55,7 +56,9 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
  *   }
  * }
  * </pre>
+ * 
  * will be translated into this sub-graph:
+ * 
  * <pre>
  * CREATE (person:Person { firstname: 'Lorenzo', lastname: 'Speranzoni', age: 41 } )
  * CREATE (job:JOB { role: 'CEO', company: 'LARUS Business Automation' })
@@ -77,8 +80,8 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 	public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
 		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
-				new TypeReference<Map<String, Object>>() {
-				});
+		    new TypeReference<Map<String, Object>>() {
+		    });
 
 		return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap);
 	}
@@ -114,9 +117,9 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 
 				childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
 
-				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[")
-						.append(":").append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase())
-						.append("]->(").append(attributeName).append(")").toString());
+				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
+				    .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
+				    .append(attributeName).append(")").toString());
 			} else {
 
 				if (firstAttr) {

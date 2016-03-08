@@ -36,7 +36,8 @@ public interface JsonTransformer<T> {
 
 	/**
 	 * @param jsonDocument
-	 *            the object wrapper containing all the directives to trasform the embedded JSON document 
+	 *          the object wrapper containing all the directives to trasform the
+	 *          embedded JSON document
 	 * @return the generated cypher statement
 	 * @throws IOException
 	 * @throws JsonMappingException

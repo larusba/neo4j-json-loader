@@ -38,14 +38,14 @@ public interface JsonLoaderService {
 	 * Convenient method to provide a proper connection to the database.
 	 * 
 	 * @param graphDatabaseService
-	 *            the database connection
+	 *          the database connection
 	 */
 	void setGraphDatabaseService(GraphDatabaseService graphDatabaseService);
 
 	/**
 	 * 
 	 * @param jsonDocument
-	 *            the document to be loaded into neo4j
+	 *          the document to be loaded into neo4j
 	 * @return statistics about how the document affected the graph
 	 * @throws JsonParseException
 	 * @throws JsonMappingException

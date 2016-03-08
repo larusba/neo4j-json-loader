@@ -42,7 +42,7 @@ public class AttributeBasedJsonTransformerTest {
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-					JsonMappingStrategy.ATTRIBUTE_BASED, null);
+			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
 			System.out.println(documentTransformer.transform(jsonDocument));
 
@@ -62,15 +62,15 @@ public class AttributeBasedJsonTransformerTest {
 			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 
 			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
-					+ jsonAddressDocument + "}";
+			    + jsonAddressDocument + "}";
 
 			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + "}";
 
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
-					+ jsonJobDocument + "}";
+			    + jsonJobDocument + "}";
 
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-					JsonMappingStrategy.ATTRIBUTE_BASED, null);
+			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
 			System.out.println(documentTransformer.transform(jsonDocument));
 

@@ -40,7 +40,7 @@ public class JsonDocument {
 	}
 
 	public JsonDocument(String id, String type, String content, JsonMappingStrategy mappingStrategy,
-			List<JsonObjectDescriptor> objectDescriptors) {
+	    List<JsonObjectDescriptor> objectDescriptors) {
 		this.id = id;
 		this.type = type;
 		this.content = content;

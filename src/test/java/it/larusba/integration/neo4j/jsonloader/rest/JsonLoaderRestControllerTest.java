@@ -38,16 +38,17 @@ public class JsonLoaderRestControllerTest {
 	public void shouldLoadJSONIntoGraph() throws Exception {
 
 		try (ServerControls server = TestServerBuilders.newInProcessBuilder()
-				.withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
+		    .withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
 
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
-			
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument, JsonMappingStrategy.ATTRIBUTE_BASED, null);
+
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
 
 			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
 
 			assertEquals(200, response.status());
-			
+
 			assertEquals(0, response.get("constraintsAdded").asInt());
 			assertEquals(0, response.get("constraintsRemoved").asInt());
 			assertEquals(0, response.get("containsUpdates").asInt());
@@ -62,27 +63,30 @@ public class JsonLoaderRestControllerTest {
 			assertEquals(0, response.get("relationshipsDeleted").asInt());
 		}
 	}
-	
+
 	@Test
 	public void shouldLoadJSONWithNestedObjectsIntoGraph() throws Exception {
-		
+
 		try (ServerControls server = TestServerBuilders.newInProcessBuilder()
-				.withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
-			
+		    .withExtension("/jsonloader", JsonLoaderRestController.class).newServer()) {
+
 			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
-			
-			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": " + jsonAddressDocument  + "}";
-			
-			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument  + "}";
-			
-			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": " + jsonJobDocument + "}";
-			
-			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument, JsonMappingStrategy.ATTRIBUTE_BASED, null);
-			
+
+			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
+			    + jsonAddressDocument + "}";
+
+			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + "}";
+
+			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
+			    + jsonJobDocument + "}";
+
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+			    JsonMappingStrategy.ATTRIBUTE_BASED, null);
+
 			HTTP.Response response = HTTP.PUT(server.httpURI().resolve("jsonloader").toString(), jsonDocument);
-			
+
 			assertEquals(200, response.status());
-			
+
 			assertEquals(0, response.get("constraintsAdded").asInt());
 			assertEquals(0, response.get("constraintsRemoved").asInt());
 			assertEquals(0, response.get("containsUpdates").asInt());

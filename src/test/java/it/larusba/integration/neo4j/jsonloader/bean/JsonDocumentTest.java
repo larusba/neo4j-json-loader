@@ -32,24 +32,25 @@ import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
  * @author Lorenzo Speranzoni
  */
 public class JsonDocumentTest {
-	
+
 	@Test
 	public void shouldSerializeJsonDocument() {
-		
+
 		JsonDocument jsonDocument = new JsonDocument();
-		
+
 		String jsonContent = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
-		
+
 		List<JsonObjectDescriptor> objectDescriptors = new ArrayList<JsonObjectDescriptor>();
-		JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person", Arrays.asList("firstName", "lastname"), null);
+		JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
+		    Arrays.asList("firstName", "lastname"), null);
 		objectDescriptors.add(personObjectDescriptor);
-		
+
 		jsonDocument.setId("1234567890QWERTY");
 		jsonDocument.setType("Person");
 		jsonDocument.setContent(jsonContent);
 		jsonDocument.setMappingStrategy(JsonMappingStrategy.DOMAIN_DRIVEN);
 		jsonDocument.setObjectDescriptors(objectDescriptors);
-		
+
 		System.out.println(JsonHelper.createJsonFrom(jsonDocument));
 	}
 }

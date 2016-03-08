@@ -44,6 +44,7 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  * connected to their own father node.</li>
  * </ul>
  * As an example, the following JSON document
+ * 
  * <pre>
  * Person:
  * {
@@ -69,14 +70,20 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  *   }
  * }
  * </pre>
+ * 
  * trained with the following domain description:
+ * 
  * <pre>
- * JsonObjectDescriptor addressObjectDescriptor = new JsonObjectDescriptor("Address", Arrays.asList("street", "zipCode")    , "type");
- * JsonObjectDescriptor companyObjectDescriptor = new JsonObjectDescriptor("Company", Arrays.asList("vat")                  , "type");
- * JsonObjectDescriptor     jobObjectDescriptor = new JsonObjectDescriptor("Job"    , Arrays.asList("role")                 , "type");
- * JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person"  , Arrays.asList("firstname", "lastname"), "type");
+ * JsonObjectDescriptor addressObjectDescriptor = new JsonObjectDescriptor("Address",
+ *     Arrays.asList("street", "zipCode"), "type");
+ * JsonObjectDescriptor companyObjectDescriptor = new JsonObjectDescriptor("Company", Arrays.asList("vat"), "type");
+ * JsonObjectDescriptor jobObjectDescriptor = new JsonObjectDescriptor("Job", Arrays.asList("role"), "type");
+ * JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
+ *     Arrays.asList("firstname", "lastname"), "type");
  * </pre>
+ * 
  * will be translated into this sub-graph:
+ * 
  * <pre>
  * MERGE (person:Person { firstname: 'Lorenzo', lastname: 'Speranzoni' })
  * ON CREATE SET person._documentId = '1234567890QWERTY', person.age = 41, person.type = 'Person'
@@ -96,7 +103,7 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  * 
  * @see <a href="http://neo4j.com/blog/cypher-load-json-from-url/">http://neo4j.
  *      com/blog/cypher-load-json-from-url/</a>
- *      
+ * 
  * @since Mar 5, 2016
  */
 public class DomainBasedJsonTransformer implements JsonTransformer<String> {
@@ -108,18 +115,21 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 	public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
 		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
-				new TypeReference<Map<String, Object>>() {
-				});
+		    new TypeReference<Map<String, Object>>() {
+		    });
 
 		JsonObjectDescriptorHelper jsonObjectDescriptorHelper = new JsonObjectDescriptorHelper(
-				jsonDocument.getObjectDescriptors());
+		    jsonDocument.getObjectDescriptors());
 
 		return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper);
 	}
 
 	/**
-	 * TODO we still don't use <code>objectDescriptorHelper.getTypeAttribute</code> to properly set node <code>Labels</code>.
+	 * TODO we still don't use
+	 * <code>objectDescriptorHelper.getTypeAttribute</code> to properly set node
+	 * <code>Labels</code>.
 	 * <p/>
+	 * 
 	 * @param documentId
 	 * @param documentType
 	 * @param documentMap
@@ -128,7 +138,7 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 	 */
 	@SuppressWarnings("unchecked")
 	private String transform(String documentId, String documentType, Map<String, Object> documentMap,
-			JsonObjectDescriptorHelper objectDescriptorHelper) {
+	    JsonObjectDescriptorHelper objectDescriptorHelper) {
 
 		StringBuffer rootNode = new StringBuffer();
 		List<String> childNodes = new ArrayList<String>();
@@ -150,12 +160,12 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 
 			if (attributeValue instanceof Map) {
 
-				childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue,
-						objectDescriptorHelper));
+				childNodes
+				    .add(transform(documentId, attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper));
 
-				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[")
-						.append(":").append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase())
-						.append("]->(").append(attributeName).append(")").toString());
+				childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
+				    .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
+				    .append(attributeName).append(")").toString());
 			} else {
 
 				if (objectDescriptorHelper.getUniqueKeyAttributes(nodeLabel).contains(attributeName)) {
@@ -182,16 +192,17 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 
 						if (firstAttr) {
 							nodeAttributes.append("ON CREATE SET ");
-							
+
 							if (documentId != null) {
-								nodeAttributes.append(nodeReference).append(".").append("_documentId = '").append(documentId).append("', ");
+								nodeAttributes.append(nodeReference).append(".").append("_documentId = '").append(documentId)
+								    .append("', ");
 							}
 
 							firstAttr = false;
 						} else {
 							nodeAttributes.append(", ");
 						}
-						
+
 						nodeAttributes.append(nodeReference).append(".").append(attributeName).append(" = ");
 
 						if (attributeValue instanceof String) {

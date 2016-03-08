@@ -62,10 +62,11 @@ public class DefaultJsonLoaderService implements JsonLoaderService {
 	 * @see it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService#save(it.larusba.integration.neo4j.jsonloader.bean.JsonDocumentTest)
 	 */
 	@Override
-	public JsonLoaderStatistics save(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
+	public JsonLoaderStatistics save(JsonDocument jsonDocument)
+	    throws JsonParseException, JsonMappingException, IOException {
 
 		JsonLoaderStatistics jsonLoaderStatistics = null;
-		
+
 		if (this.graphDatabaseService == null || !this.graphDatabaseService.isAvailable(10))
 			throw new IllegalStateException("Database connection not available.");
 
@@ -77,14 +78,14 @@ public class DefaultJsonLoaderService implements JsonLoaderService {
 		LOGGER.info("\n" + cypher);
 
 		try (Transaction tx = this.graphDatabaseService.beginTx()) {
-			
+
 			Result result = this.graphDatabaseService.execute(cypher);
-			
+
 			jsonLoaderStatistics = new JsonLoaderStatistics(result.getQueryStatistics());
-			
+
 			tx.success();
 		}
-		
+
 		return jsonLoaderStatistics;
 	}
 }

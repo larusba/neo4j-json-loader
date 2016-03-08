@@ -27,7 +27,7 @@ import java.util.List;
 public class JsonObjectDescriptor {
 
 	private String entityName;
-	
+
 	private List<String> uniqueKeyAttributes;
 
 	private String typeAttribute;

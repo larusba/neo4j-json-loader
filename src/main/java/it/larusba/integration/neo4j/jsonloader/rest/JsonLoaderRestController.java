@@ -40,7 +40,6 @@ import it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService;
  * @author Lorenzo Speranzoni
  * @since Mar 3, 2016
  */
-
 @Path("/")
 public class JsonLoaderRestController {
 
@@ -78,7 +77,7 @@ public class JsonLoaderRestController {
 			LOGGER.error("Error parsing JSON document", e);
 
 			return Response.status(Status.BAD_REQUEST).entity("Error parsing JSON document. Reason: " + e.getMessage())
-					.build();
+			    .build();
 		}
 	}
 }

@@ -41,7 +41,7 @@ public class DomainBasedJsonTransformerTest {
 		try {
 
 			JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
-					Arrays.asList("firstname", "lastname"), "type");
+			    Arrays.asList("firstname", "lastname"), "type");
 
 			List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
 			jsonObjectDescriptors.add(personObjectDescriptor);
@@ -49,7 +49,7 @@ public class DomainBasedJsonTransformerTest {
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\", \"type\": \"Person\"}";
 
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
+			    JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
 			JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
 
@@ -69,15 +69,14 @@ public class DomainBasedJsonTransformerTest {
 		try {
 
 			JsonObjectDescriptor addressObjectDescriptor = new JsonObjectDescriptor("Address",
-					Arrays.asList("street", "zipCode"), "type");
+			    Arrays.asList("street", "zipCode"), "type");
 
-			JsonObjectDescriptor companyObjectDescriptor = new JsonObjectDescriptor("Company", Arrays.asList("vat"),
-					"type");
+			JsonObjectDescriptor companyObjectDescriptor = new JsonObjectDescriptor("Company", Arrays.asList("vat"), "type");
 
 			JsonObjectDescriptor jobObjectDescriptor = new JsonObjectDescriptor("Job", Arrays.asList("role"), "type");
 
 			JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
-					Arrays.asList("firstname", "lastname"), "type");
+			    Arrays.asList("firstname", "lastname"), "type");
 
 			List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
 			jsonObjectDescriptors.add(addressObjectDescriptor);
@@ -88,15 +87,15 @@ public class DomainBasedJsonTransformerTest {
 			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 
 			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
-					+ jsonAddressDocument + ", \"type\": \"Company\"}";
+			    + jsonAddressDocument + ", \"type\": \"Company\"}";
 
 			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + ", \"type\": \"Job\"}";
 
 			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
-					+ jsonJobDocument + ", \"type\": \"Person\"}";
+			    + jsonJobDocument + ", \"type\": \"Person\"}";
 
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
+			    JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
 			JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
 
