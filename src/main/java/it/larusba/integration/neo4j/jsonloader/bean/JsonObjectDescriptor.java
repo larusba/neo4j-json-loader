@@ -26,31 +26,42 @@ import java.util.List;
  */
 public class JsonObjectDescriptor {
 
-	private List<String> uniqueKey;
+	private String entityName;
+	
+	private List<String> uniqueKeyAttributes;
 
-	private String type;
+	private String typeAttribute;
 
 	public JsonObjectDescriptor() {
 	}
 
-	public JsonObjectDescriptor(List<String> uniqueKey, String type) {
-		this.uniqueKey = uniqueKey;
-		this.type = type;
+	public JsonObjectDescriptor(String entityName, List<String> uniqueKeyAttributes, String typeAttribute) {
+		this.entityName = entityName;
+		this.uniqueKeyAttributes = uniqueKeyAttributes;
+		this.typeAttribute = typeAttribute;
 	}
 
-	public List<String> getUniqueKey() {
-		return uniqueKey;
+	public String getEntityName() {
+		return entityName;
 	}
 
-	public void setUniqueKey(List<String> uniqueKey) {
-		this.uniqueKey = uniqueKey;
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
 	}
 
-	public String getType() {
-		return type;
+	public List<String> getUniqueKeyAttributes() {
+		return uniqueKeyAttributes;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setUniqueKeyAttributes(List<String> uniqueAttributes) {
+		this.uniqueKeyAttributes = uniqueAttributes;
+	}
+
+	public String getTypeAttribute() {
+		return typeAttribute;
+	}
+
+	public void setTypeAttribute(String typeAttribute) {
+		this.typeAttribute = typeAttribute;
 	}
 }

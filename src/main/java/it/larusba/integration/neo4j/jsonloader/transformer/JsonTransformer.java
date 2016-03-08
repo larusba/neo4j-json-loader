@@ -19,10 +19,11 @@
 package it.larusba.integration.neo4j.jsonloader.transformer;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
+
+import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
 
 /**
  * Tranformer for JSON Document.
@@ -34,28 +35,12 @@ import org.codehaus.jackson.map.JsonMappingException;
 public interface JsonTransformer<T> {
 
 	/**
-	 * @param documentId
-	 *            unique identificator for the JSON document
-	 * @param documentRootType
-	 *            the associated JSON document type
 	 * @param jsonDocument
-	 *            the JSON document to transform
+	 *            the object wrapper containing all the directives to trasform the embedded JSON document 
 	 * @return the generated cypher statement
 	 * @throws IOException
 	 * @throws JsonMappingException
 	 * @throws JsonParseException
 	 */
-	T transform(String documentId, String documentRootType, String jsonDocument)
-			throws JsonParseException, JsonMappingException, IOException;
-
-	/**
-	 * @param documentId
-	 *            unique identificator for the JSON document
-	 * @param documentType
-	 *            the associated JSON document type
-	 * @param documentMap
-	 *            the JSON document map representation
-	 * @return the generated cypher statement
-	 */
-	String transform(String documentId, String documentType, Map<String, Object> documentMa);
+	T transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException;
 }

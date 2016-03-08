@@ -29,6 +29,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+
 /**
  * Domain agnostic {@link JsonTransformer} implementation.
  * <p/>
@@ -41,6 +43,7 @@ import org.codehaus.jackson.type.TypeReference;
  * connected to their own father node.</li>
  * </ul>
  * As an example, the following JSON document
+ * 
  * <pre>
  * Person: {
  *   "firstname": "Lorenzo",
@@ -53,7 +56,9 @@ import org.codehaus.jackson.type.TypeReference;
  *   }
  * }
  * </pre>
+ * 
  * will be translated into this sub-graph:
+ * 
  * <pre>
  * CREATE (person:Person { firstname: 'Lorenzo', lastname: 'Speranzoni', age: 41 } )
  * CREATE (job:JOB { role: 'CEO', company: 'LARUS Business Automation' })
@@ -73,21 +78,24 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 	 *      java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String transform(String documentId, String documentType, String jsonDocument)
-			throws JsonParseException, JsonMappingException, IOException {
+	public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
-		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument,
+		Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
 				new TypeReference<Map<String, Object>>() {
 				});
 
-		return transform(documentId, documentType, documentMap);
+		return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap);
 	}
 
 	/**
-	 * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
-	 *      java.lang.String, java.util.Map)
+	 * It recursively parses a <code>Map</code> representation of the JSON
+	 * document.
+	 * 
+	 * @param documentId
+	 * @param documentType
+	 * @param documentMap
+	 * @return
 	 */
-	@Override
 	@SuppressWarnings("unchecked")
 	public String transform(String documentId, String documentType, Map<String, Object> documentMap) {
 
@@ -95,9 +103,9 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 		List<String> childNodes = new ArrayList<String>();
 		List<String> childRelationships = new ArrayList<String>();
 
-		String nodeReference = StringUtils.lowerCase(documentType);
+		String nodeReference = (documentType != null) ? StringUtils.lowerCase(documentType) : "document";
 		String nodeLabel = StringUtils.capitalize(nodeReference);
-		
+
 		rootNode.append("CREATE (").append(nodeReference).append(":").append(nodeLabel);
 
 		boolean firstAttr = true;
