@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
 
 /**
@@ -63,14 +65,26 @@ public class JsonObjectDescriptorHelper {
     return entityNames;
   }
 
+  public boolean hasTypeAttribute(String entityName) {
+    return StringUtils.isNotBlank(this.entityTypeAttributeMap.get(entityName));
+  }
+
   public String getTypeAttribute(String entityName) {
     return this.entityTypeAttributeMap.get(entityName);
   }
+  
+  public boolean hasUniqueKeyAttributes(String entityName) {
+    return this.entityUniqueKeyAttributesMap.get(entityName) != null && this.entityUniqueKeyAttributesMap.get(entityName).size() > 0;
+  }
 
+  public boolean isAttributeInUniqueKey(String entityName, String attributeName) {
+    return this.hasUniqueKeyAttributes(entityName) && this.entityUniqueKeyAttributesMap.get(entityName).contains(attributeName);
+  }
+  
   public List<String> getUniqueKeyAttributes(String entityName) {
     return this.entityUniqueKeyAttributesMap.get(entityName);
   }
-
+  
   public Map<String, String> getEntityTypeAttributeMap() {
     return entityTypeAttributeMap;
   }

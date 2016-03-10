@@ -130,7 +130,7 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
     JsonObjectDescriptorHelper jsonObjectDescriptorHelper = new JsonObjectDescriptorHelper(
         jsonDocument.getObjectDescriptors());
 
-    return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper);
+    return transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper, null);
   }
 
   /**
@@ -142,21 +142,27 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
    */
   @SuppressWarnings("unchecked")
   private String transform(String documentId, String documentType, Map<String, Object> documentMap,
-      JsonObjectDescriptorHelper objectDescriptorHelper) {
-
-    StringBuffer rootNode = new StringBuffer();
-    List<String> childNodes = new ArrayList<String>();
-    List<String> childRelationships = new ArrayList<String>();
-
-    String nodeLabel = (String) documentMap.get(objectDescriptorHelper.getTypeAttribute(documentType));
-    String nodeReference = nodeLabel.toLowerCase();
-
-    rootNode.append("MERGE (").append(nodeReference).append(":").append(nodeLabel);
-
-    StringBuffer nodeAttributes = new StringBuffer();
+      JsonObjectDescriptorHelper objectDescriptorHelper, Integer position) {
 
     boolean firstAttr = true;
     boolean firstUniqueAttr = true;
+
+    List<String> childNodes = new ArrayList<String>();
+    List<String> childRelationships = new ArrayList<String>();
+
+    StringBuffer rootNode = new StringBuffer();
+
+    String nodeLabel = buildNodeLabel(documentType, documentMap, objectDescriptorHelper);
+    String nodeReference = buildNodeReference(position, nodeLabel);
+
+    if (objectDescriptorHelper.hasUniqueKeyAttributes(nodeLabel)) {
+    }
+    else {
+    }
+    
+    rootNode.append("MERGE (").append(nodeReference).append(":").append(nodeLabel);
+
+    StringBuffer nodeAttributes = new StringBuffer();
 
     for (String attributeName : documentMap.keySet()) {
 
@@ -164,15 +170,75 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 
       if (attributeValue instanceof Map) {
 
-        childNodes
-            .add(transform(documentId, StringUtils.capitalize(attributeName), (Map<String, Object>) attributeValue, objectDescriptorHelper));
+        childNodes.add(transform(documentId, StringUtils.capitalize(attributeName),
+            (Map<String, Object>) attributeValue, objectDescriptorHelper, null));
 
         childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
             .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
             .append(attributeName).append(")").toString());
+
+      } else if (attributeValue instanceof List) {
+
+        List<Object> attributeValueList = (List<Object>) attributeValue;
+
+        if (attributeValueList.size() > 0) {
+
+          if (attributeValueList.get(0) instanceof Map) {
+
+            for (int i = 0; i < ((List<Object>) attributeValue).size(); i++) {
+
+              Object attributeValueElement = ((List<Object>) attributeValue).get(i);
+
+              if (attributeValueElement instanceof Map) {
+
+                childNodes.add(transform(documentId, StringUtils.capitalize(attributeName),
+                    (Map<String, Object>) attributeValueElement, objectDescriptorHelper, i));
+
+                childRelationships.add(new StringBuffer().append("MERGE (").append(nodeReference).append(")-[")
+                    .append(":").append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase())
+                    .append("]->(").append(attributeName + i).append(")").toString());
+              }
+            }
+          } else {
+
+            if (firstAttr) {
+              nodeAttributes.append("ON CREATE SET ");
+
+              if (documentId != null) {
+                nodeAttributes.append(nodeReference).append(".").append("_documentId = '").append(documentId)
+                    .append("', ");
+              }
+
+              firstAttr = false;
+            } else {
+              nodeAttributes.append(", ");
+            }
+
+            nodeAttributes.append(nodeReference).append(".").append(attributeName).append(" = [");
+
+            for (int i = 0; i < ((List<Object>) attributeValue).size(); i++) {
+
+              Object attributeValueElement = ((List<Object>) attributeValue).get(i);
+
+              if (attributeValueElement != null) {
+
+                if (i != 0)
+                  nodeAttributes.append(", ");
+
+                if (attributeValueElement instanceof String) {
+                  nodeAttributes.append("'").append(attributeValueElement).append("'");
+                } else {
+                  nodeAttributes.append(attributeValueElement);
+                }
+              }
+            }
+
+            nodeAttributes.append("]");
+          }
+        }
       } else {
 
-        if (objectDescriptorHelper.getUniqueKeyAttributes(nodeLabel).contains(attributeName)) {
+        if (objectDescriptorHelper.isAttributeInUniqueKey(nodeLabel, attributeName)) {
 
           if (firstUniqueAttr) {
             rootNode.append(" { ");
@@ -236,5 +302,21 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
     }
 
     return cypher.toString();
+  }
+
+  private String buildNodeReference(Integer position, String nodeLabel) {
+    return nodeLabel.toLowerCase() + ((position != null) ? position : "");
+  }
+
+  private String buildNodeLabel(String documentType, Map<String, Object> documentMap,
+      JsonObjectDescriptorHelper objectDescriptorHelper) {
+
+    String typeAttribute = (String) documentMap.get(objectDescriptorHelper.getTypeAttribute(documentType));
+
+    if (StringUtils.isBlank(typeAttribute)) {
+      typeAttribute = StringUtils.lowerCase(documentType);
+    }
+
+    return StringUtils.capitalize(typeAttribute);
   }
 }
