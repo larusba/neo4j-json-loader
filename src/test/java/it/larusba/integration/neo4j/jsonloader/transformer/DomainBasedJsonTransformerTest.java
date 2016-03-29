@@ -21,7 +21,9 @@ package it.larusba.integration.neo4j.jsonloader.transformer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -30,83 +32,99 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
 import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
 
 /**
- *
  * @author Lorenzo Speranzoni
+ * @author Riccardo Birello
  */
 public class DomainBasedJsonTransformerTest {
 
-  @Test
-  public void shouldTransformJsonDocumentIntoACypherStatement() {
+	@Test
+	public void shouldTransformJsonDocumentIntoACypherStatement() {
 
-    try {
+		try {
 
-      JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
-          Arrays.asList("firstname", "lastname"), "type");
+			JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
+					Arrays.asList("firstname", "lastname"), "type");
 
-      List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
-      jsonObjectDescriptors.add(personObjectDescriptor);
+			List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
+			jsonObjectDescriptors.add(personObjectDescriptor);
 
-      String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\", \"type\": \"Person\"}";
+			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\", \"type\": \"Person\"}";
 
-      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-          JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-      JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
+			JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
 
-      System.out.println(documentTransformer.transform(jsonDocument));
+			System.out.println(documentTransformer.transform(jsonDocument));
 
-    } catch (Exception e) {
+		} catch (Exception e) {
 
-      e.printStackTrace();
+			e.printStackTrace();
 
-      Assert.fail(e.getMessage());
-    }
-  }
+			Assert.fail(e.getMessage());
+		}
+	}
 
-  @Test
-  public void shouldTransformNestedJsonDocumentIntoACypherStatement() {
+	@Test
+	public void shouldTransformNestedJsonDocumentIntoACypherStatement() {
 
-    try {
+		try {
 
-      JsonObjectDescriptor addressObjectDescriptor = new JsonObjectDescriptor("Address",
-          Arrays.asList("street", "zipCode"), "type");
+			JsonObjectDescriptor addressObjectDescriptor = new JsonObjectDescriptor("Address",
+					Arrays.asList("street", "zipCode"), "type");
 
-      JsonObjectDescriptor companyObjectDescriptor = new JsonObjectDescriptor("Company", Arrays.asList("vat"), "type");
+			JsonObjectDescriptor companyObjectDescriptor = new JsonObjectDescriptor("Company", Arrays.asList("vat"),
+					"type");
 
-      JsonObjectDescriptor jobObjectDescriptor = new JsonObjectDescriptor("Job", Arrays.asList("role"), "type");
+			JsonObjectDescriptor jobObjectDescriptor = new JsonObjectDescriptor("Job", Arrays.asList("role"), "type");
 
-      JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
-          Arrays.asList("firstname", "lastname"), "type");
+			JsonObjectDescriptor personObjectDescriptor = new JsonObjectDescriptor("Person",
+					Arrays.asList("firstname", "lastname"), "type");
 
-      List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
-      jsonObjectDescriptors.add(addressObjectDescriptor);
-      jsonObjectDescriptors.add(companyObjectDescriptor);
-      jsonObjectDescriptors.add(jobObjectDescriptor);
-      jsonObjectDescriptors.add(personObjectDescriptor);
+			List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
+			jsonObjectDescriptors.add(addressObjectDescriptor);
+			jsonObjectDescriptors.add(companyObjectDescriptor);
+			jsonObjectDescriptors.add(jobObjectDescriptor);
+			jsonObjectDescriptors.add(personObjectDescriptor);
 
-      String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\", \"type\": \"Address\"}";
+			String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\", \"type\": \"Address\"}";
 
-      String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
-          + jsonAddressDocument + ", \"type\": \"Company\"}";
+			String jsonCompanyDocument = "{\"name\": \"LARUS Business Automation\", \"vat\": \"03540680273\", \"address\": "
+					+ jsonAddressDocument + ", \"type\": \"Company\"}";
 
-      String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + ", \"type\": \"Job\"}";
+			String jsonJobDocument = "{\"role\": \"CEO\", \"company\": " + jsonCompanyDocument + ", \"type\": \"Job\"}";
 
-      String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
-          + jsonJobDocument + ", \"type\": \"Person\"}";
+			String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": "
+					+ jsonJobDocument + ", \"type\": \"Person\"}";
 
-      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
-          JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
+			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
+					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-      JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
+			JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
 
-      System.out.println(documentTransformer.transform(jsonDocument));
+			System.out.println(documentTransformer.transform(jsonDocument));
 
-    } catch (Exception e) {
+		} catch (Exception e) {
 
-      e.printStackTrace();
+			e.printStackTrace();
 
-      Assert.fail(e.getMessage());
-    }
-  }
+			Assert.fail(e.getMessage());
+		}
+	}
 
+	@Test
+	public void test() throws Exception {
+		String content = IOUtils.toString(getClass().getResourceAsStream("/json/album.json"));
+//		String content = IOUtils.toString(getClass().getResourceAsStream("/json/album-mini.json"));
+		String id = UUID.randomUUID().toString();
+		String type = "Album";
+		JsonMappingStrategy mappingStrategy = JsonMappingStrategy.DOMAIN_DRIVEN;
+		JsonObjectDescriptor descriptor1 = new JsonObjectDescriptor("Album", Arrays.asList("id", "type"), "type");
+		List<JsonObjectDescriptor> descriptors = new ArrayList<>();
+		descriptors.add(descriptor1);
+		JsonDocument jsonDocument = new JsonDocument(id, type, content, mappingStrategy, descriptors);
+		DomainBasedJsonTransformer transformer = new DomainBasedJsonTransformer();
+		String transform = transformer.transform(jsonDocument);
+		System.out.println(transform);
+	}
 }

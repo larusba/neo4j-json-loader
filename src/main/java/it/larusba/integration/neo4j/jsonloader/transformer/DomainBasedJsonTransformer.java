@@ -30,6 +30,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
 import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
 
 /**
@@ -116,7 +117,7 @@ import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
  * @since Mar 5, 2016
  */
 public class DomainBasedJsonTransformer implements JsonTransformer<String> {
-
+	
   /**
    * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(it.larusba.integration.neo4j.jsonloader.bean.JsonDocument)
    */
@@ -155,6 +156,7 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
     String nodeLabel = buildNodeLabel(documentType, documentMap, objectDescriptorHelper);
     String nodeReference = buildNodeReference(position, nodeLabel);
 
+    //TODO implement
     if (objectDescriptorHelper.hasUniqueKeyAttributes(nodeLabel)) {
     }
     else {
@@ -185,9 +187,9 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 
           if (attributeValueList.get(0) instanceof Map) {
 
-            for (int i = 0; i < ((List<Object>) attributeValue).size(); i++) {
+            for (int i = 0; i < attributeValueList.size(); i++) {
 
-              Object attributeValueElement = ((List<Object>) attributeValue).get(i);
+              Object attributeValueElement = attributeValueList.get(i);
 
               if (attributeValueElement instanceof Map) {
 
@@ -216,9 +218,9 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
 
             nodeAttributes.append(nodeReference).append(".").append(attributeName).append(" = [");
 
-            for (int i = 0; i < ((List<Object>) attributeValue).size(); i++) {
+            for (int i = 0; i < attributeValueList.size(); i++) {
 
-              Object attributeValueElement = ((List<Object>) attributeValue).get(i);
+              Object attributeValueElement = attributeValueList.get(i);
 
               if (attributeValueElement != null) {
 
@@ -285,20 +287,20 @@ public class DomainBasedJsonTransformer implements JsonTransformer<String> {
       }
     }
 
-    rootNode.append(" })").append("\n").append(nodeAttributes);
+    if(firstAttr == firstUniqueAttr){
+    	rootNode.append("}");
+    }
+    rootNode.append(")").append(System.lineSeparator()).append(nodeAttributes);
 
     StringBuffer cypher = new StringBuffer();
-
     cypher.append(rootNode);
 
     for (String childNode : childNodes) {
-
-      cypher.append("\n").append(childNode);
+      cypher.append(System.lineSeparator()).append(childNode);
     }
 
     for (String childRelationship : childRelationships) {
-
-      cypher.append("\n").append(childRelationship);
+      cypher.append(System.lineSeparator()).append(childRelationship);
     }
 
     return cypher.toString();

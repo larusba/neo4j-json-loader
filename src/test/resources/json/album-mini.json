@@ -1,0 +1,32 @@
+{
+  "album_type" : "album",
+  "artists" : [ {
+    "external_urls" : {
+      "spotify" : "https://open.spotify.com/artist/51Blml2LZPmy7TTiAg47vQ"
+    },
+    "href" : "https://api.spotify.com/v1/artists/51Blml2LZPmy7TTiAg47vQ",
+    "id" : "51Blml2LZPmy7TTiAg47vQ",
+    "name" : "U2",
+    "type" : "artist",
+    "uri" : "spotify:artist:51Blml2LZPmy7TTiAg47vQ"
+  } ],
+  "available_markets" : [ "AD", "AR", "AT", "AU", "BE", "BG", "BO", "BR", "CH", "CL", "CO", "CR", "CY", "CZ", "DE", "DK", "DO", "EC", "EE", "ES", "FI", "FR", "GB", "GR", "GT", "HK", "HN", "HU", "IE", "IS", "IT", "LI", "LT", "LU", "LV", "MC", "MT", "MY", "NI", "NL", "NO", "NZ", "PA", "PE", "PH", "PL", "PT", "PY", "RO", "SG", "SI", "SK", "SV", "TR", "TW", "UY" ],
+  "copyrights" : [ {
+    "text" : "(C) 2014 Island Records, a division of Universal Music Operations Limited",
+    "type" : "C"
+  }, {
+    "text" : "(P) 2014 Island Records, a division of Universal Music Operations Limited",
+    "type" : "P"
+  } ],
+  "external_ids" : {
+    "upc" : "00602547069511"
+  },
+  "external_urls" : {
+    "spotify" : "https://open.spotify.com/album/7DY6v8qiyQcsTCqUWjH7pS"
+  },
+  "genres" : [ ],
+  "href" : "https://api.spotify.com/v1/albums/7DY6v8qiyQcsTCqUWjH7pS",
+  "id" : "7DY6v8qiyQcsTCqUWjH7pS",
+  "type" : "album",
+  "uri" : "spotify:album:7DY6v8qiyQcsTCqUWjH7pS"
+}
