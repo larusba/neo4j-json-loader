@@ -3,198 +3,254 @@ package it.larusba.integration.neo4j.jsonloader.transformer.test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
+/**
+ * The class represents a JSON node with all informations.
+ * 
+ * @author Riccardo Birello
+ */
 public class Node {
 
-	private String name;
-	private String label;
-	private List<String> documentIds;
-	private Map<String, String> keys;
-	private Map<String, String> attributes;
-	private Map<String, List<String>> listAttributes;
-	private List<Node> outgoingRelations;
+    /** The name attribute. */
+    private String name;
+    /** The label attribute. */
+    private String label;
+    /** The documentId attribute. */
+    private String documentId;
+    /** The keys attribute. */
+    private Map<String, Object> keys;
+    /** The attributes attribute. */
+    private Map<String, Object> attributes;
+    /** The listAttributes attribute. */
+    private Map<String, List<Object>> listAttributes;
+    /** The outgoingRelations attribute. */
+    private List<Node> outgoingRelations;
 
-	public Node() {
-		this.keys = new HashMap<>();
-		this.attributes = new HashMap<>();
-		this.listAttributes = new HashMap<>();
-		this.outgoingRelations = new ArrayList<>();
-		this.documentIds = new ArrayList<>();
-	}
+    /** The constructor. */
+    public Node() {
+        this.keys = new HashMap<>();
+        this.attributes = new HashMap<>();
+        this.listAttributes = new HashMap<>();
+        this.outgoingRelations = new ArrayList<>();
+    }
 
-	public Node(String documentId, String name, String label) {
-		this();
-		addDocumentId(documentId);
-		this.name = name;
-		this.label = label;
-	}
+    /**
+     * The constructor.
+     * 
+     * @param documentId
+     *            the document ID
+     * @param name
+     *            the name of the node
+     * @param label
+     *            the label of the node
+     */
+    public Node(String documentId, String name, String label) {
+        this();
+        this.documentId = documentId;
+        this.name = name;
+        this.label = label;
+    }
 
-	@Override
-	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("MERGE (").append(this.name).append(":").append(this.label);
-		if (this.keys.isEmpty()) {
-			if (this.attributes.isEmpty()) {
-				throw new IllegalStateException("The node cannot be completely empty");
-			} else {
-				this.keys.putAll(this.attributes);
-				this.attributes.clear();
-			}
-		}
-		buffer.append(buildAttributesString(this.keys));
-		buffer.append(")");
+    /**
+     * The method adds a key attribute to node.
+     * 
+     * @param key
+     *            the key of the attribute
+     * @param value
+     *            the value of the attribute
+     */
+    public void addKey(String key, Object value) {
+        this.keys.put(key, value);
+    }
 
-		String ids = buildArrayString(this.documentIds);
+    /**
+     * The method adds an attribute.
+     * 
+     * @param key
+     *            the key of the attribute
+     * @param value
+     *            the value of the attribute
+     */
+    public void addAttribute(String key, Object value) {
+        this.attributes.put(key, value);
+    }
 
-		buffer.append(System.lineSeparator());
-		buffer.append(String.format("SET %s.documentIds=%s.documentIds + %s", this.name, this.name, ids));
-//		buffer.append(String.format("SET %s.documentIds=filter(x in %s.documentIds | x <> %s) + %s", this.name, this.name, ids, ids));
-		if (!this.attributes.isEmpty()) {
-			buffer.append(", ");
-			for (String key : this.attributes.keySet()) {
-				String value = this.attributes.get(key);
-				buffer.append(this.name).append(".").append(key).append("='").append(value).append("', ");
-			}
-			buffer.delete(buffer.length() - 2, buffer.length());
-		}
-		if (!this.listAttributes.isEmpty()) {
-			if (!this.attributes.isEmpty()) {
-				buffer.append(", ");
-			}
-			for (String key : this.listAttributes.keySet()) {
-				List<String> values = this.listAttributes.get(key);
-				buffer.append(this.name).append(".").append(key).append("=").append(buildArrayString(values));
-			}
-		}
-		return buffer.toString();
-	}
+    /**
+     * The method adds a list attribute to the node.
+     * 
+     * @param key
+     *            the key of the attribute
+     * @param value
+     *            the value to add
+     */
+    public void addListAttribute(String key, Object value) {
+        List<Object> list = this.listAttributes.get(key);
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(value);
+        this.listAttributes.put(key, list);
+    }
 
-	private String buildArrayString(List<String> list) {
-		StringBuffer docBuffer = new StringBuffer();
-		docBuffer.append("[");
-		for (String documentId : list) {
-			docBuffer.append("'").append(documentId).append("', ");
-		}
-		docBuffer.delete(docBuffer.length() - 2, docBuffer.length());
-		docBuffer.append("]");
-		return docBuffer.toString();
-	}
+    /**
+     * The method adds an outgoing relation.
+     * 
+     * @param node
+     *            the node to add
+     */
+    public void addOutgoingRelation(Node node) {
+        this.outgoingRelations.add(node);
+    }
 
-	private String buildAttributesString(Map<String, String> map) {
-		StringBuffer buffer = new StringBuffer();
-		buffer.append("{");
-		for (String key : map.keySet()) {
-			String value = map.get(key);
-			buffer.append(key).append(":'").append(value).append("', ");
-		}
-		buffer.delete(buffer.length() - 2, buffer.length());
-		buffer.append("}");
-		return buffer.toString();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+        result = prime * result + ((keys == null) ? 0 : keys.hashCode());
+        result = prime * result + ((label == null) ? 0 : label.hashCode());
+        result = prime * result + ((listAttributes == null) ? 0 : listAttributes.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
 
-	/*
-	 * MERGE (tracks)-[:TRACKS_ITEMS]->(items0)
-	 */
-	public Set<String> toStringOutcomingRelations() {
-		Set<String> response = null;
-		if (!this.outgoingRelations.isEmpty()) {
-			response = new HashSet<>();
-			for (Node node : this.outgoingRelations) {
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(this.label).append("_").append(node.getLabel());
-				String relationName = buffer.toString().toUpperCase(Locale.ITALY);
-				response.add(String.format("MERGE (%s)-[:%s]->(%s)", this.name, relationName, node.getName()));
-			}
-		}
-		return response;
-	}
+    /**
+     * The getter of name.
+     * 
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	public void addKey(String key, String value) {
-		this.keys.put(key, value);
-	}
+    /**
+     * The setter of name.
+     * 
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void addAttribute(String key, String value) {
-		this.attributes.put(key, value);
-	}
+    /**
+     * The getter of label.
+     * 
+     * @return the label
+     */
+    public String getLabel() {
+        return label;
+    }
 
-	public void addListAttribute(String key, String value) {
-		List<String> list = this.listAttributes.get(key);
-		if (list == null) {
-			list = new ArrayList<>();
-		}
-		list.add(value);
-		this.listAttributes.put(key, list);
-	}
+    /**
+     * The setter of label.
+     * 
+     * @param label
+     *            the label to set
+     */
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void addOutgoingRelation(Node node) {
-		this.outgoingRelations.add(node);
-	}
+    /**
+     * The getter of documentId.
+     * 
+     * @return the documentId
+     */
+    public String getDocumentId() {
+        return documentId;
+    }
 
-	public void addDocumentId(String documentId) {
-		if (this.documentIds == null) {
-			this.documentIds = new ArrayList<>();
-		}
-		this.documentIds.add(documentId);
-	}
+    /**
+     * The setter of documentId.
+     * 
+     * @param documentId
+     *            the documentId to set
+     */
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * The getter of keys.
+     * 
+     * @return the keys
+     */
+    public Map<String, Object> getKeys() {
+        return keys;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * The setter of keys.
+     * 
+     * @param keys
+     *            the keys to set
+     */
+    public void setKeys(Map<String, Object> keys) {
+        this.keys = keys;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    /**
+     * The getter of attributes.
+     * 
+     * @return the attributes
+     */
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    /**
+     * The setter of attributes.
+     * 
+     * @param attributes
+     *            the attributes to set
+     */
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
 
-	public List<String> getDocumentIds() {
-		return documentIds;
-	}
+    /**
+     * The getter of listAttributes.
+     * 
+     * @return the listAttributes
+     */
+    public Map<String, List<Object>> getListAttributes() {
+        return listAttributes;
+    }
 
-	public void setDocumentIds(List<String> documentIds) {
-		this.documentIds = documentIds;
-	}
+    /**
+     * The setter of listAttributes.
+     * 
+     * @param listAttributes
+     *            the listAttributes to set
+     */
+    public void setListAttributes(Map<String, List<Object>> listAttributes) {
+        this.listAttributes = listAttributes;
+    }
 
-	public Map<String, String> getKeys() {
-		return keys;
-	}
+    /**
+     * The getter of outgoingRelations.
+     * 
+     * @return the outgoingRelations
+     */
+    public List<Node> getOutgoingRelations() {
+        return outgoingRelations;
+    }
 
-	public void setKeys(Map<String, String> keys) {
-		this.keys = keys;
-	}
-
-	public Map<String, String> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Map<String, String> attributes) {
-		this.attributes = attributes;
-	}
-
-	public Map<String, List<String>> getListAttributes() {
-		return listAttributes;
-	}
-
-	public void setListAttributes(Map<String, List<String>> listAttributes) {
-		this.listAttributes = listAttributes;
-	}
-
-	public List<Node> getOutgoingRelations() {
-		return outgoingRelations;
-	}
-
-	public void setOutgoingRelations(List<Node> outgoingRelations) {
-		this.outgoingRelations = outgoingRelations;
-	}
+    /**
+     * The setter of outgoingRelations.
+     * 
+     * @param outgoingRelations
+     *            the outgoingRelations to set
+     */
+    public void setOutgoingRelations(List<Node> outgoingRelations) {
+        this.outgoingRelations = outgoingRelations;
+    }
 }

@@ -34,7 +34,7 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
 import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
 
 /**
- * Domain agnostic {@link JsonTransformer} implementation.
+ * Domain driven {@link JsonTransformer} implementation.
  * <p/>
  * It converts a JSON document into a Cypher statement, following this strategy:
  * <p/>
