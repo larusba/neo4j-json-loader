@@ -64,8 +64,6 @@ public final class CypherGenerator {
             buffer.delete(buffer.length() - 2, buffer.length());
         }
         if (!node.getListAttributes().isEmpty()) {
-            if (!node.getAttributes().isEmpty()) {
-            }
             buffer.append(", ");
             for (String key : node.getListAttributes().keySet()) {
                 List<Object> values = node.getListAttributes().get(key);
