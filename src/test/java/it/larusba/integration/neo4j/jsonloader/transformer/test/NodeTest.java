@@ -45,7 +45,7 @@ public class NodeTest {
 		outcomingRelations.add(related);
 
 		Node node = buildNode();
-		node.setOutcomingRelations(outcomingRelations);
+		node.setOutgoingRelations(outcomingRelations);
 
 		System.out.println(node.toString());
 		System.out.println(node.toStringOutcomingRelations());

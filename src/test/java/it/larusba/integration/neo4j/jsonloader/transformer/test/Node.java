@@ -11,49 +11,54 @@ import java.util.Set;
 
 public class Node {
 
+	private String name;
 	private String label;
-	private String type;
-	private String documentId;
+	private List<String> documentIds;
 	private Map<String, String> keys;
 	private Map<String, String> attributes;
 	private Map<String, List<String>> listAttributes;
-	private List<Node> outcomingRelations;
+	private List<Node> outgoingRelations;
 
 	public Node() {
 		this.keys = new HashMap<>();
 		this.attributes = new HashMap<>();
 		this.listAttributes = new HashMap<>();
-		this.outcomingRelations = new ArrayList<>();
+		this.outgoingRelations = new ArrayList<>();
+		this.documentIds = new ArrayList<>();
 	}
 
-	public Node(String documentId, String label, String type) {
+	public Node(String documentId, String name, String label) {
 		this();
-		this.documentId = documentId;
+		addDocumentId(documentId);
+		this.name = name;
 		this.label = label;
-		this.type = type;
 	}
 
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("MERGE (").append(this.label).append(":").append(this.type);
-		if (!this.keys.isEmpty()) {
-			buffer.append("{");
-			for (String key : this.keys.keySet()) {
-				String value = this.keys.get(key);
-				buffer.append(key).append("=").append("'").append(value).append("'").append(", ");
+		buffer.append("MERGE (").append(this.name).append(":").append(this.label);
+		if (this.keys.isEmpty()) {
+			if (this.attributes.isEmpty()) {
+				throw new IllegalStateException("The node cannot be completely empty");
+			} else {
+				this.keys.putAll(this.attributes);
+				this.attributes.clear();
 			}
-			buffer.delete(buffer.length() - 2, buffer.length());
-			buffer.append("}");
 		}
+		buffer.append(buildAttributesString(this.keys));
 		buffer.append(")");
-		buffer.append(System.lineSeparator()).append("ON CREATE SET ").append(this.label).append(".")
-				.append("documentId").append("=").append("'").append(this.documentId).append("'").append(", ");
+
+		String ids = buildArrayString(this.documentIds);
+
+		buffer.append(System.lineSeparator());
+		buffer.append(String.format("SET %s.documentIds=%s.documentIds + %s", this.name, this.name, ids));
+//		buffer.append(String.format("SET %s.documentIds=filter(x in %s.documentIds | x <> %s) + %s", this.name, this.name, ids, ids));
 		if (!this.attributes.isEmpty()) {
+			buffer.append(", ");
 			for (String key : this.attributes.keySet()) {
 				String value = this.attributes.get(key);
-				buffer.append(this.label).append(".").append(key).append("=").append("'").append(value).append("'")
-						.append(", ");
+				buffer.append(this.name).append(".").append(key).append("='").append(value).append("', ");
 			}
 			buffer.delete(buffer.length() - 2, buffer.length());
 		}
@@ -62,15 +67,33 @@ public class Node {
 				buffer.append(", ");
 			}
 			for (String key : this.listAttributes.keySet()) {
-				buffer.append(this.label).append(".").append(key).append("=").append("[");
 				List<String> values = this.listAttributes.get(key);
-				for (String value : values) {
-					buffer.append("'").append(value).append("'").append(", ");
-				}
-				buffer.delete(buffer.length() - 2, buffer.length());
-				buffer.append("]");
+				buffer.append(this.name).append(".").append(key).append("=").append(buildArrayString(values));
 			}
 		}
+		return buffer.toString();
+	}
+
+	private String buildArrayString(List<String> list) {
+		StringBuffer docBuffer = new StringBuffer();
+		docBuffer.append("[");
+		for (String documentId : list) {
+			docBuffer.append("'").append(documentId).append("', ");
+		}
+		docBuffer.delete(docBuffer.length() - 2, docBuffer.length());
+		docBuffer.append("]");
+		return docBuffer.toString();
+	}
+
+	private String buildAttributesString(Map<String, String> map) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("{");
+		for (String key : map.keySet()) {
+			String value = map.get(key);
+			buffer.append(key).append(":'").append(value).append("', ");
+		}
+		buffer.delete(buffer.length() - 2, buffer.length());
+		buffer.append("}");
 		return buffer.toString();
 	}
 
@@ -79,56 +102,16 @@ public class Node {
 	 */
 	public Set<String> toStringOutcomingRelations() {
 		Set<String> response = null;
-		if (!this.outcomingRelations.isEmpty()) {
+		if (!this.outgoingRelations.isEmpty()) {
 			response = new HashSet<>();
-			for (Node node : outcomingRelations) {
+			for (Node node : this.outgoingRelations) {
 				StringBuffer buffer = new StringBuffer();
-				buffer.append(this.type).append("_").append(node.getType());
+				buffer.append(this.label).append("_").append(node.getLabel());
 				String relationName = buffer.toString().toUpperCase(Locale.ITALY);
-				response.add(String.format("MERGE (%s)-[:%s]->(%s)", this.label, relationName, node.getLabel()));
+				response.add(String.format("MERGE (%s)-[:%s]->(%s)", this.name, relationName, node.getName()));
 			}
 		}
 		return response;
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public Map<String, String> getKeys() {
-		return keys;
-	}
-
-	public void setKeys(Map<String, String> keys) {
-		this.keys = keys;
-	}
-
-	public Map<String, String> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(Map<String, String> attributes) {
-		this.attributes = attributes;
-	}
-
-	public List<Node> getOutcomingRelations() {
-		return outcomingRelations;
-	}
-
-	public void setOutcomingRelations(List<Node> outcomingRelations) {
-		this.outcomingRelations = outcomingRelations;
 	}
 
 	public void addKey(String key, String value) {
@@ -148,15 +131,70 @@ public class Node {
 		this.listAttributes.put(key, list);
 	}
 
-	public void addOutcomingRelation(Node node) {
-		this.outcomingRelations.add(node);
+	public void addOutgoingRelation(Node node) {
+		this.outgoingRelations.add(node);
 	}
 
-	public String getDocumentId() {
-		return documentId;
+	public void addDocumentId(String documentId) {
+		if (this.documentIds == null) {
+			this.documentIds = new ArrayList<>();
+		}
+		this.documentIds.add(documentId);
 	}
 
-	public void setDocumentId(String documentId) {
-		this.documentId = documentId;
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public List<String> getDocumentIds() {
+		return documentIds;
+	}
+
+	public void setDocumentIds(List<String> documentIds) {
+		this.documentIds = documentIds;
+	}
+
+	public Map<String, String> getKeys() {
+		return keys;
+	}
+
+	public void setKeys(Map<String, String> keys) {
+		this.keys = keys;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
+	}
+
+	public Map<String, List<String>> getListAttributes() {
+		return listAttributes;
+	}
+
+	public void setListAttributes(Map<String, List<String>> listAttributes) {
+		this.listAttributes = listAttributes;
+	}
+
+	public List<Node> getOutgoingRelations() {
+		return outgoingRelations;
+	}
+
+	public void setOutgoingRelations(List<Node> outgoingRelations) {
+		this.outgoingRelations = outgoingRelations;
 	}
 }

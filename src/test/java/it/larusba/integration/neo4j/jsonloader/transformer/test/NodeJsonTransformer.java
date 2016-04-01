@@ -62,7 +62,7 @@ public class NodeJsonTransformer implements JsonTransformer<Set<String>> {
 			if (stringOutcomingRelations != null) {
 				response.addAll(stringOutcomingRelations);
 			}
-			response.addAll(getAllStatements(node.getOutcomingRelations()));
+			response.addAll(getAllStatements(node.getOutgoingRelations()));
 		}
 		return response;
 	}
@@ -81,7 +81,7 @@ public class NodeJsonTransformer implements JsonTransformer<Set<String>> {
 			if (attributeValue instanceof Map) {
 				String type = buildNodeLabel(attributeName, (Map<String, Object>) attributeValue,
 						objectDescriptorHelper);
-				node.addOutcomingRelation(transform(documentId, type, (Map<String, Object>) attributeValue,
+				node.addOutgoingRelation(transform(documentId, type, (Map<String, Object>) attributeValue,
 						objectDescriptorHelper, null));
 			} else if (attributeValue instanceof List) {
 				List<Object> list = (List<Object>) attributeValue;
@@ -90,7 +90,7 @@ public class NodeJsonTransformer implements JsonTransformer<Set<String>> {
 						if (object instanceof Map) {
 							String type = buildNodeLabel(attributeName, (Map<String, Object>) object,
 									objectDescriptorHelper);
-							node.addOutcomingRelation(transform(documentId, type, (Map<String, Object>) object,
+							node.addOutgoingRelation(transform(documentId, type, (Map<String, Object>) object,
 									objectDescriptorHelper, null));
 						} else {
 							node.addListAttribute(attributeName, (String) object);
