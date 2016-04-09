@@ -16,6 +16,8 @@ public class DocumentNode {
 
 	/** The name attribute. */
 	private String name;
+	/** The type attribute. */
+	private String type;
 	/** The label attribute. */
 	private String label;
 	/** The documentId attribute. */
@@ -47,9 +49,10 @@ public class DocumentNode {
 	 * @param label
 	 *          the label of the node
 	 */
-	public DocumentNode(String documentId, String name, String label) {
+	public DocumentNode(String documentId, String type, String name, String label) {
 		this();
 		this.documentId = documentId;
+		this.type = type;
 		this.name = name;
 		this.label = label;
 	}
@@ -139,6 +142,25 @@ public class DocumentNode {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/**
+	 * The getter of type.
+	 * 
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * The setter of type.
+	 * 
+	 * @param type
+	 *          the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
 	}
 
 	/**

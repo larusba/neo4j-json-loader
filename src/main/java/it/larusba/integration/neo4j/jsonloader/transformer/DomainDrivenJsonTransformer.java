@@ -62,34 +62,128 @@ public class DomainDrivenJsonTransformer implements JsonTransformer<String> {
 	}
 
 	/**
-	 * This method builds the final generated statement.
+	 * The method transforms the JSON map.
 	 * 
-	 * @param statements
-	 *          the ordered statements list
-	 * @return the final cypher statement
+	 * @param documentId
+	 *          the document ID
+	 * @param documentType
+	 *          the type of the document
+	 * @param documentMap
+	 *          the document's map
+	 * @param objectDescriptorHelper
+	 *          the descriptor helper
+	 * @return the node
 	 */
-	private String getAllStatementsAsString(List<String> statements) {
-		String cypher = "";
-		for (String statement : statements) {
-			cypher += statement + "\n";
+	private DocumentNode transform(String documentId, String documentType, Map<String, Object> documentMap,
+	    JsonObjectDescriptorHelper objectDescriptorHelper) {
+		String nodeLabel = buildNodeLabel(documentType, documentMap, objectDescriptorHelper);
+		String nodeName = nodeLabel.toLowerCase(Locale.ITALY);
+		DocumentNode node = new DocumentNode(documentId, documentType, nodeName, nodeLabel);
+		for (String attributeName : documentMap.keySet()) {
+			Object attributeValue = documentMap.get(attributeName);
+			if (attributeValue instanceof Map) {
+				handleMap(documentId, objectDescriptorHelper, node, attributeName, attributeValue);
+			} else if (attributeValue instanceof List) {
+				handleList(documentId, objectDescriptorHelper, node, attributeName, attributeValue);
+			} else {
+				handleSimpleAttribute(objectDescriptorHelper, node, attributeName, attributeValue);
+			}
 		}
-		return cypher;
+		// FIXME is it correct to take the absolute hash?
+		int hashCode = Math.abs(node.hashCode());
+		node.setName(node.getName() + hashCode);
+		return node;
 	}
 
 	/**
-	 * The method gets all statements, ordering first the nodes statements e after
-	 * the relations.
+	 * The method handles a simple attribute.
 	 * 
-	 * @param nodes
-	 *          the node's list
-	 * @return the ordered statements list
+	 * @param objectDescriptorHelper
+	 *          the descriptor helper
+	 * @param node
+	 *          the current node
+	 * @param attributeName
+	 *          the attribute name
+	 * @param attributeValue
+	 *          the attribute value
 	 */
-	private List<String> getAllStatements(List<DocumentNode> nodes) {
-		Set<String> nodesSet = getAllNodeStatements(nodes);
-		Set<String> nodesRelationsSet = getAllRelationsStatements(nodes);
-		ArrayList<String> result = new ArrayList<>(nodesSet);
-		result.addAll(nodesRelationsSet);
-		return result;
+	private void handleSimpleAttribute(JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
+	    String attributeName, Object attributeValue) {
+		if (objectDescriptorHelper.isAttributeInUniqueKey(node.getType(), attributeName)) {
+			node.addKey(attributeName, attributeValue);
+		} else {
+			node.addAttribute(attributeName, attributeValue);
+		}
+	}
+
+	/**
+	 * The method handleList.
+	 * 
+	 * @param documentId
+	 *          the document ID
+	 * @param objectDescriptorHelper
+	 *          the descriptor helper
+	 * @param node
+	 *          the current node
+	 * @param attributeName
+	 *          the attribute name
+	 * @param attributeValue
+	 *          the attribute value
+	 */
+	@SuppressWarnings("unchecked")
+	private void handleList(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
+	    String attributeName, Object attributeValue) {
+		List<Object> list = (List<Object>) attributeValue;
+		if (!list.isEmpty()) {
+			for (Object object : list) {
+				if (object instanceof Map) {
+					handleMap(documentId, objectDescriptorHelper, node, attributeName, object);
+				} else {
+					node.addListAttribute(attributeName, object);
+				}
+			}
+		}
+	}
+
+	/**
+	 * The method handleMap.
+	 * 
+	 * @param documentId
+	 *          the document ID
+	 * @param objectDescriptorHelper
+	 *          the descriptor helper
+	 * @param node
+	 *          the current node
+	 * @param attributeName
+	 *          the attribute name
+	 * @param attributeValue
+	 *          the attribute value
+	 */
+	@SuppressWarnings("unchecked")
+	private void handleMap(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
+	    String attributeName, Object attributeValue) {
+		String type = buildNodeLabel(attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper);
+		node.addOutgoingRelation(transform(documentId, type, (Map<String, Object>) attributeValue, objectDescriptorHelper));
+	}
+
+	/**
+	 * The method builds the label of the node.
+	 * 
+	 * @param documentType
+	 *          the type of document
+	 * @param documentMap
+	 *          the document's map
+	 * @param objectDescriptorHelper
+	 *          the descriptor helper
+	 * @return the label of the node
+	 */
+	private String buildNodeLabel(String documentType, Map<String, Object> documentMap,
+	    JsonObjectDescriptorHelper objectDescriptorHelper) {
+		String typeAttribute = (String) documentMap.get(objectDescriptorHelper.getTypeAttribute(documentType));
+		if (StringUtils.isBlank(typeAttribute)) {
+			typeAttribute = StringUtils.lowerCase(documentType);
+		}
+		return StringUtils.capitalize(typeAttribute);
 	}
 
 	/**
@@ -128,127 +222,33 @@ public class DomainDrivenJsonTransformer implements JsonTransformer<String> {
 	}
 
 	/**
-	 * The method transforms the JSON map.
+	 * The method gets all statements, ordering first the nodes statements e after
+	 * the relations.
 	 * 
-	 * @param documentId
-	 *          the document ID
-	 * @param documentType
-	 *          the type of the document
-	 * @param documentMap
-	 *          the document's map
-	 * @param objectDescriptorHelper
-	 *          the descriptor helper
-	 * @return the node
+	 * @param nodes
+	 *          the node's list
+	 * @return the ordered statements list
 	 */
-	private DocumentNode transform(String documentId, String documentType, Map<String, Object> documentMap,
-	    JsonObjectDescriptorHelper objectDescriptorHelper) {
-		String nodeLabel = buildNodeLabel(documentType, documentMap, objectDescriptorHelper);
-		String nodeName = nodeLabel.toLowerCase(Locale.ITALY);
-		DocumentNode node = new DocumentNode(documentId, nodeName, nodeLabel);
-		for (String attributeName : documentMap.keySet()) {
-			Object attributeValue = documentMap.get(attributeName);
-			if (attributeValue instanceof Map) {
-				handleMap(documentId, objectDescriptorHelper, node, attributeName, attributeValue);
-			} else if (attributeValue instanceof List) {
-				handleList(documentId, objectDescriptorHelper, node, attributeName, attributeValue);
-			} else {
-				handleSimpleAttribute(objectDescriptorHelper, node, attributeName, attributeValue);
-			}
-		}
-		// FIXME is it correct to take the absolute hash?
-		int hashCode = Math.abs(node.hashCode());
-		node.setName(node.getName() + hashCode);
-		return node;
+	private List<String> getAllStatements(List<DocumentNode> nodes) {
+		Set<String> nodesSet = getAllNodeStatements(nodes);
+		Set<String> nodesRelationsSet = getAllRelationsStatements(nodes);
+		ArrayList<String> result = new ArrayList<>(nodesSet);
+		result.addAll(nodesRelationsSet);
+		return result;
 	}
 
 	/**
-	 * The method handles a simple attribute.
+	 * This method builds the final generated statement.
 	 * 
-	 * @param objectDescriptorHelper
-	 *          the descriptor helper
-	 * @param node
-	 *          the current node
-	 * @param attributeName
-	 *          the attribute name
-	 * @param attributeValue
-	 *          the attribute value
+	 * @param statements
+	 *          the ordered statements list
+	 * @return the final cypher statement
 	 */
-	private void handleSimpleAttribute(JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
-	    String attributeName, Object attributeValue) {
-		if (objectDescriptorHelper.isAttributeInUniqueKey(node.getLabel(), attributeName)) {
-			node.addKey(attributeName, (String) attributeValue);
-		} else {
-			node.addAttribute(attributeName, attributeValue);
+	private String getAllStatementsAsString(List<String> statements) {
+		String cypher = "";
+		for (String statement : statements) {
+			cypher += statement + "\n";
 		}
-	}
-
-	/**
-	 * The method handleList.
-	 * 
-	 * @param documentId
-	 *          the document ID
-	 * @param objectDescriptorHelper
-	 *          the descriptor helper
-	 * @param node
-	 *          the current node
-	 * @param attributeName
-	 *          the attribute name
-	 * @param attributeValue
-	 *          the attribute value
-	 */
-	@SuppressWarnings("unchecked")
-	private void handleList(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
-	    String attributeName, Object attributeValue) {
-		List<Object> list = (List<Object>) attributeValue;
-		if (!list.isEmpty()) {
-			for (Object object : list) {
-				if (object instanceof Map) {
-					handleMap(documentId, objectDescriptorHelper, node, attributeName, object);
-				} else {
-					node.addListAttribute(attributeName, (String) object);
-				}
-			}
-		}
-	}
-
-	/**
-	 * The method handleMap.
-	 * 
-	 * @param documentId
-	 *          the document ID
-	 * @param objectDescriptorHelper
-	 *          the descriptor helper
-	 * @param node
-	 *          the current node
-	 * @param attributeName
-	 *          the attribute name
-	 * @param attributeValue
-	 *          the attribute value
-	 */
-	@SuppressWarnings("unchecked")
-	private void handleMap(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
-	    String attributeName, Object attributeValue) {
-		String type = buildNodeLabel(attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper);
-		node.addOutgoingRelation(transform(documentId, type, (Map<String, Object>) attributeValue, objectDescriptorHelper));
-	}
-
-	/**
-	 * The method builds the label of the node.
-	 * 
-	 * @param documentType
-	 *          the type of the document
-	 * @param documentMap
-	 *          the document's map
-	 * @param objectDescriptorHelper
-	 *          the descriptor helper
-	 * @return the label of the node
-	 */
-	private String buildNodeLabel(String documentType, Map<String, Object> documentMap,
-	    JsonObjectDescriptorHelper objectDescriptorHelper) {
-		String typeAttribute = (String) documentMap.get(objectDescriptorHelper.getTypeAttribute(documentType));
-		if (StringUtils.isBlank(typeAttribute)) {
-			typeAttribute = StringUtils.lowerCase(documentType);
-		}
-		return StringUtils.capitalize(typeAttribute);
+		return cypher;
 	}
 }

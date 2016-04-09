@@ -38,20 +38,52 @@ import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 public class DomainBasedSpotifyJsonTransformerTest {
 
   @Test
-  public void shouldTransformSpotifyAlbumJsonIntoACypherStatement() {
+  public void shouldTransformU2SongOfInnocenceAlbumJsonIntoACypherStatement() {
 
     try {
 
       List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
       jsonObjectDescriptors.add(new JsonObjectDescriptor("Album", Arrays.asList("id"), "type"));
-      jsonObjectDescriptors.add(new JsonObjectDescriptor("Artist", Arrays.asList("id"), "type"));
-      jsonObjectDescriptors.add(new JsonObjectDescriptor("Track", Arrays.asList("id"), "type"));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Artists", Arrays.asList("id"), "type"));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Images", Arrays.asList("url"), null));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Tracks", Arrays.asList("href"), null));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Items", Arrays.asList("id"), "type"));
 
-      String spotifyAlbumDocument = FileUtils.readFileToString(new File("src/test/resources/spotify", "album.json"));
+      String spotifyAlbumDocument = FileUtils.readFileToString(new File("src/test/resources/spotify", "album-u2-songs-of-innocence.json"));
 
-      System.out.println(spotifyAlbumDocument);
+      //System.out.println(spotifyAlbumDocument);
       
-      JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Album", spotifyAlbumDocument,
+      JsonDocument jsonDocument = new JsonDocument("U2SongOfInnocenceAlbum", "Album", spotifyAlbumDocument,
+          JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
+
+      JsonTransformer<String> documentTransformer = new DomainDrivenJsonTransformer();
+
+      System.out.println(documentTransformer.transform(jsonDocument));
+
+    } catch (Exception e) {
+
+      e.printStackTrace();
+
+      Assert.fail(e.getMessage());
+    }
+  }
+
+  @Test
+  public void shouldTransformU2NoLineOnTheHorizonAlbumJsonIntoACypherStatement() {
+
+    try {
+
+      List<JsonObjectDescriptor> jsonObjectDescriptors = new ArrayList<JsonObjectDescriptor>();
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Album", Arrays.asList("id"), "type"));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Artists", Arrays.asList("id"), "type"));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Images", Arrays.asList("url"), null));
+      jsonObjectDescriptors.add(new JsonObjectDescriptor("Items", Arrays.asList("id"), "type"));
+
+      String spotifyAlbumDocument = FileUtils.readFileToString(new File("src/test/resources/spotify", "album-u2-no-line-on-the-horizon.json"));
+
+      //System.out.println(spotifyAlbumDocument);
+      
+      JsonDocument jsonDocument = new JsonDocument("U2NoLineOnTheHorizonAlbum", "Album", spotifyAlbumDocument,
           JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
       JsonTransformer<String> documentTransformer = new DomainDrivenJsonTransformer();

@@ -26,7 +26,7 @@ public class DocumentNodeTest {
 
   @Test
   public void testToStringOutComingRelations() {
-      DocumentNode related = new DocumentNode(String.valueOf(System.currentTimeMillis()), "song1", "Track");
+      DocumentNode related = new DocumentNode(String.valueOf(System.currentTimeMillis()), "items", "song1", "Track");
 
       List<DocumentNode> outcomingRelations = new ArrayList<>();
       outcomingRelations.add(related);
@@ -46,7 +46,7 @@ public class DocumentNodeTest {
 	    Map<String, Object> attributes = new HashMap<>();
 	    attributes.put("year", "2016");
 	
-	    DocumentNode node = new DocumentNode(String.valueOf(System.currentTimeMillis()), "album1", "Album");
+	    DocumentNode node = new DocumentNode(String.valueOf(System.currentTimeMillis()), "albums", "album1", "Album");
 	    node.setKeys(keys);
 	    node.setAttributes(attributes);
 	    node.addListAttribute("markets", "IT");
