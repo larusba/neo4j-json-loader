@@ -48,8 +48,9 @@ public final class CypherGenerator {
 		buffer.append(node.getName());
 		buffer.append(":");
 		buffer.append(node.getLabel());
+		buffer.append(" {");
 		buffer.append(buildUniqueKey(node));
-		buffer.append(")");
+		buffer.append("})");
 		buffer.append(System.lineSeparator());
 		buffer.append("SET ");
 		buffer.append(buildDocumentIdProperty(node));
@@ -103,8 +104,6 @@ public final class CypherGenerator {
 			}
 		}
 		
-		buffer.append(" {");
-
 		for (String key : node.getKeys().keySet()) {
 			Object value = node.getKeys().get(key);
 			if (value != null) {
@@ -115,8 +114,6 @@ public final class CypherGenerator {
 			}
 		}
 		buffer.delete(buffer.length() - 2, buffer.length());
-		
-		buffer.append("}");
 	
 		return buffer.toString();
 	}
