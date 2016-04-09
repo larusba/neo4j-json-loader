@@ -24,7 +24,7 @@ public class DomainBasedAmbumMiniJsonTransformerTest {
         JsonDocument jsonDocument = new JsonDocument(id, type, content, JsonMappingStrategy.DOMAIN_DRIVEN, descriptors);
         DomainDrivenJsonTransformer transformer = new DomainDrivenJsonTransformer();
         long start = System.currentTimeMillis();
-        List<String> transformedSet = transformer.transform(jsonDocument);
+        String transformedSet = transformer.transform(jsonDocument);
         long end = System.currentTimeMillis();
         System.out.println("---------RESULT---------");
         System.out.println(transformedSet);
@@ -41,7 +41,7 @@ public class DomainBasedAmbumMiniJsonTransformerTest {
         JsonDocument jsonDocument = new JsonDocument(id, type, content, JsonMappingStrategy.DOMAIN_DRIVEN, descriptors);
         DomainDrivenJsonTransformer transformer = new DomainDrivenJsonTransformer();
         long start = System.currentTimeMillis();
-        List<String> transformedSet = transformer.transform(jsonDocument);
+        String transformedSet = transformer.transform(jsonDocument);
         long end = System.currentTimeMillis();
         System.out.println("---------RESULT---------");
         System.out.println(transformedSet);

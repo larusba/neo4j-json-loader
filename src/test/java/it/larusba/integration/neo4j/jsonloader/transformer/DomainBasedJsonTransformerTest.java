@@ -53,7 +53,7 @@ public class DomainBasedJsonTransformerTest {
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
 					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-			JsonTransformer<String> documentTransformer = new UnrefactoredDomainBasedJsonTransformer();
+			JsonTransformer<String> documentTransformer = new DomainDrivenJsonTransformer();
 
 			System.out.println(documentTransformer.transform(jsonDocument));
 
@@ -100,7 +100,7 @@ public class DomainBasedJsonTransformerTest {
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
 					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-			JsonTransformer<String> documentTransformer = new UnrefactoredDomainBasedJsonTransformer();
+			JsonTransformer<String> documentTransformer = new DomainDrivenJsonTransformer();
 
 			System.out.println(documentTransformer.transform(jsonDocument));
 
@@ -123,7 +123,7 @@ public class DomainBasedJsonTransformerTest {
 		List<JsonObjectDescriptor> descriptors = new ArrayList<>();
 		descriptors.add(descriptor1);
 		JsonDocument jsonDocument = new JsonDocument(id, type, content, mappingStrategy, descriptors);
-		UnrefactoredDomainBasedJsonTransformer transformer = new UnrefactoredDomainBasedJsonTransformer();
+		JsonTransformer<String> transformer = new DomainDrivenJsonTransformer();
 		String transform = transformer.transform(jsonDocument);
 		System.out.println(transform);
 	}

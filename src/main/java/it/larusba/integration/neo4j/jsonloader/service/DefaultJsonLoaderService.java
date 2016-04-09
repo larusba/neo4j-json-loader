@@ -19,7 +19,6 @@
 package it.larusba.integration.neo4j.jsonloader.service;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.ws.rs.core.Context;
 
@@ -71,10 +70,10 @@ public class DefaultJsonLoaderService implements JsonLoaderService {
 		if (this.graphDatabaseService == null || !this.graphDatabaseService.isAvailable(10))
 			throw new IllegalStateException("Database connection not available.");
 
-		JsonTransformer<List<String>> jsonTransformer = JsonTransformerFactory
+		JsonTransformer<String> jsonTransformer = JsonTransformerFactory
 		    .getInstance(jsonDocument.getMappingStrategy());
 
-		String cypher = jsonTransformer.transform(jsonDocument).toArray(new String[] {})[0];
+		String cypher = jsonTransformer.transform(jsonDocument);
 
 		LOGGER.info("Cypher statement:");
 		LOGGER.info("\n" + cypher);

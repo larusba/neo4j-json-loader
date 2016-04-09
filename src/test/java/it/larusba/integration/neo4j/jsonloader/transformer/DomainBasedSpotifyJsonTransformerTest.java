@@ -54,7 +54,7 @@ public class DomainBasedSpotifyJsonTransformerTest {
       JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Album", spotifyAlbumDocument,
           JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-      JsonTransformer<String> documentTransformer = new UnrefactoredDomainBasedJsonTransformer();
+      JsonTransformer<String> documentTransformer = new DomainDrivenJsonTransformer();
 
       System.out.println(documentTransformer.transform(jsonDocument));
 
