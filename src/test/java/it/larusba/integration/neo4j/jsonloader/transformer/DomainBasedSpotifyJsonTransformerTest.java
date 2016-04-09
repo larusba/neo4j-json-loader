@@ -27,9 +27,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonObjectDescriptor;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
 /**
  *
@@ -54,7 +54,7 @@ public class DomainBasedSpotifyJsonTransformerTest {
       JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Album", spotifyAlbumDocument,
           JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-      JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
+      JsonTransformer<String> documentTransformer = new UnrefactoredDomainBasedJsonTransformer();
 
       System.out.println(documentTransformer.transform(jsonDocument));
 

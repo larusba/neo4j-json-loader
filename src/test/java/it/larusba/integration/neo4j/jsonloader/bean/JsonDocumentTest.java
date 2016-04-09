@@ -25,7 +25,9 @@ import java.util.List;
 import org.junit.Test;
 import org.neo4j.server.rest.domain.JsonHelper;
 
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonObjectDescriptor;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
 /**
  *

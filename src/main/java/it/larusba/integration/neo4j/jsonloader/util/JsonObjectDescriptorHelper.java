@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
+import it.larusba.integration.common.document.bean.JsonObjectDescriptor;
 
 /**
  *

@@ -25,8 +25,8 @@ import org.neo4j.harness.ServerControls;
 import org.neo4j.harness.TestServerBuilders;
 import org.neo4j.test.server.HTTP;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
 /**
  *

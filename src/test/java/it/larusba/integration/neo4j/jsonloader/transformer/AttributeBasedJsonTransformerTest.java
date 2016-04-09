@@ -18,13 +18,13 @@
  */
 package it.larusba.integration.neo4j.jsonloader.transformer;
 
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
-import it.larusba.integration.neo4j.jsonloader.transformer.AttributeBasedJsonTransformer;
-import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
 /**
  *
@@ -37,7 +37,7 @@ public class AttributeBasedJsonTransformerTest {
 
     try {
 
-      JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
+      JsonTransformer<Set<String>> documentTransformer = new AttributeBasedJsonTransformer();
 
       String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
@@ -57,7 +57,7 @@ public class AttributeBasedJsonTransformerTest {
 
     try {
 
-      JsonTransformer<String> documentTransformer = new AttributeBasedJsonTransformer();
+      JsonTransformer<Set<String>> documentTransformer = new AttributeBasedJsonTransformer();
 
       String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 

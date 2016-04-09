@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonDocument;
 
 /**
  * Tranformer for JSON Document.

@@ -27,9 +27,9 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonObjectDescriptor;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
 /**
  * @author Lorenzo Speranzoni
@@ -53,7 +53,7 @@ public class DomainBasedJsonTransformerTest {
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
 					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-			JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
+			JsonTransformer<String> documentTransformer = new UnrefactoredDomainBasedJsonTransformer();
 
 			System.out.println(documentTransformer.transform(jsonDocument));
 
@@ -100,7 +100,7 @@ public class DomainBasedJsonTransformerTest {
 			JsonDocument jsonDocument = new JsonDocument("1234567890QWERTY", "Person", jsonPersonDocument,
 					JsonMappingStrategy.DOMAIN_DRIVEN, jsonObjectDescriptors);
 
-			JsonTransformer<String> documentTransformer = new DomainBasedJsonTransformer();
+			JsonTransformer<String> documentTransformer = new UnrefactoredDomainBasedJsonTransformer();
 
 			System.out.println(documentTransformer.transform(jsonDocument));
 
@@ -123,7 +123,7 @@ public class DomainBasedJsonTransformerTest {
 		List<JsonObjectDescriptor> descriptors = new ArrayList<>();
 		descriptors.add(descriptor1);
 		JsonDocument jsonDocument = new JsonDocument(id, type, content, mappingStrategy, descriptors);
-		DomainBasedJsonTransformer transformer = new DomainBasedJsonTransformer();
+		UnrefactoredDomainBasedJsonTransformer transformer = new UnrefactoredDomainBasedJsonTransformer();
 		String transform = transformer.transform(jsonDocument);
 		System.out.println(transform);
 	}

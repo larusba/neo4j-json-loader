@@ -1,5 +1,5 @@
 
-package it.larusba.integration.neo4j.jsonloader.transformer.test;
+package it.larusba.integration.neo4j.jsonloader.bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,24 +9,27 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-public class Node {
+public class DocumentNode {
+
+	private String documentId;
 
 	private String label;
 	private String type;
-	private String documentId;
+	
 	private Map<String, String> keys;
 	private Map<String, String> attributes;
 	private Map<String, List<String>> listAttributes;
-	private List<Node> outcomingRelations;
+	
+	private List<DocumentNode> outcomingRelations;
 
-	public Node() {
+	public DocumentNode() {
 		this.keys = new HashMap<>();
 		this.attributes = new HashMap<>();
 		this.listAttributes = new HashMap<>();
 		this.outcomingRelations = new ArrayList<>();
 	}
 
-	public Node(String documentId, String label, String type) {
+	public DocumentNode(String documentId, String label, String type) {
 		this();
 		this.documentId = documentId;
 		this.label = label;
@@ -81,11 +84,11 @@ public class Node {
 		Set<String> response = null;
 		if (!this.outcomingRelations.isEmpty()) {
 			response = new HashSet<>();
-			for (Node node : outcomingRelations) {
+			for (DocumentNode documentNode : outcomingRelations) {
 				StringBuffer buffer = new StringBuffer();
-				buffer.append(this.type).append("_").append(node.getType());
+				buffer.append(this.type).append("_").append(documentNode.getType());
 				String relationName = buffer.toString().toUpperCase(Locale.ITALY);
-				response.add(String.format("MERGE (%s)-[:%s]->(%s)", this.label, relationName, node.getLabel()));
+				response.add(String.format("MERGE (%s)-[:%s]->(%s)", this.label, relationName, documentNode.getLabel()));
 			}
 		}
 		return response;
@@ -123,11 +126,11 @@ public class Node {
 		this.attributes = attributes;
 	}
 
-	public List<Node> getOutcomingRelations() {
+	public List<DocumentNode> getOutcomingRelations() {
 		return outcomingRelations;
 	}
 
-	public void setOutcomingRelations(List<Node> outcomingRelations) {
+	public void setOutcomingRelations(List<DocumentNode> outcomingRelations) {
 		this.outcomingRelations = outcomingRelations;
 	}
 
@@ -148,8 +151,8 @@ public class Node {
 		this.listAttributes.put(key, list);
 	}
 
-	public void addOutcomingRelation(Node node) {
-		this.outcomingRelations.add(node);
+	public void addOutcomingRelation(DocumentNode documentNode) {
+		this.outcomingRelations.add(documentNode);
 	}
 
 	public String getDocumentId() {

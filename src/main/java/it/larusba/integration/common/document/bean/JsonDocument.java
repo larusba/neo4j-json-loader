@@ -16,11 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.larusba.integration.neo4j.jsonloader.bean;
+package it.larusba.integration.common.document.bean;
 
 import java.util.List;
 
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
 /**
  *

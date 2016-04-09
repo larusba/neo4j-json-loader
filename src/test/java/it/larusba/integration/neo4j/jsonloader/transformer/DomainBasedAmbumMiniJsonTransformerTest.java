@@ -1,4 +1,4 @@
-package it.larusba.integration.neo4j.jsonloader.transformer.test;
+package it.larusba.integration.neo4j.jsonloader.transformer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,11 +9,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.junit.Test;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.bean.JsonObjectDescriptor;
-import it.larusba.integration.neo4j.jsonloader.mapping.JsonMappingStrategy;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonObjectDescriptor;
+import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
+import it.larusba.integration.neo4j.jsonloader.transformer.DomainBasedJsonTransformer;
 
-public class NodeJsonTransformerTest {
+public class DomainBasedAmbumMiniJsonTransformerTest {
 
 	@Test
 	public void test() throws Exception {
@@ -23,7 +24,7 @@ public class NodeJsonTransformerTest {
 		List<JsonObjectDescriptor> descriptors = new ArrayList<>();
 		descriptors.add(new JsonObjectDescriptor(type, Arrays.asList("id", "type"), "type"));
 		JsonDocument jsonDocument = new JsonDocument(id, type, content, JsonMappingStrategy.DOMAIN_DRIVEN, descriptors);
-		NodeJsonTransformer transformer = new NodeJsonTransformer();
+		DomainBasedJsonTransformer transformer = new DomainBasedJsonTransformer();
 		long start = System.currentTimeMillis();
 		Set<String> transformedSet = transformer.transform(jsonDocument);
 		long end = System.currentTimeMillis();

@@ -20,8 +20,11 @@ package it.larusba.integration.neo4j.jsonloader.transformer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonParseException;
@@ -29,7 +32,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonDocument;
 
 /**
  * Domain agnostic {@link JsonTransformer} implementation.
@@ -70,14 +73,14 @@ import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
  * @see <a href="http://neo4j.com/blog/cypher-load-json-from-url/">http://neo4j.
  *      com/blog/cypher-load-json-from-url/</a>
  */
-public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
+public class AttributeBasedJsonTransformer implements JsonTransformer<Set<String>> {
 
   /**
    * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
    *      java.lang.String, java.lang.String)
    */
   @Override
-  public String transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
+  public Set<String> transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
     Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
         new TypeReference<Map<String, Object>>() {
@@ -96,7 +99,7 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
    * @return
    */
   @SuppressWarnings("unchecked")
-  public String transform(String documentId, String documentType, Map<String, Object> documentMap) {
+  public Set<String> transform(String documentId, String documentType, Map<String, Object> documentMap) {
 
     StringBuffer rootNode = new StringBuffer();
     List<String> childNodes = new ArrayList<String>();
@@ -115,7 +118,7 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
 
       if (attributeValue instanceof Map) {
 
-        childNodes.add(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
+        childNodes.addAll(transform(documentId, attributeName, (Map<String, Object>) attributeValue));
 
         childRelationships.add(new StringBuffer().append("CREATE (").append(nodeReference).append(")-[").append(":")
             .append(nodeReference.toUpperCase()).append("_").append(attributeName.toUpperCase()).append("]->(")
@@ -162,6 +165,6 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<String> {
       cypher.append("\n").append(childRelationship);
     }
 
-    return cypher.toString();
+    return new HashSet<String>(Arrays.asList(cypher.toString()));
   }
 }

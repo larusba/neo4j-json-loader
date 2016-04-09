@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.larusba.integration.neo4j.jsonloader.bean;
+package it.larusba.integration.common.document.bean;
 
 import java.util.List;
 
@@ -64,4 +64,10 @@ public class JsonObjectDescriptor {
   public void setTypeAttribute(String typeAttribute) {
     this.typeAttribute = typeAttribute;
   }
+
+	@Override
+	public String toString() {
+		return "JsonObjectDescriptor [entityName=" + entityName + ", uniqueKeyAttributes=" + uniqueKeyAttributes
+		    + ", typeAttribute=" + typeAttribute + "]";
+	}
 }

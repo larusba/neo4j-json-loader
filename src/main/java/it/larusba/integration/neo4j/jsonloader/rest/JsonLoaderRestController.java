@@ -32,7 +32,7 @@ import org.neo4j.graphdb.QueryStatistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonDocument;
 import it.larusba.integration.neo4j.jsonloader.service.DefaultJsonLoaderService;
 import it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService;
 
@@ -65,6 +65,7 @@ public class JsonLoaderRestController {
       LOGGER.info("document type: " + jsonDocument.getType());
       LOGGER.info("document: " + jsonDocument.getContent());
       LOGGER.info("mapping strategy: " + jsonDocument.getMappingStrategy());
+      LOGGER.info("object descriptors: " + jsonDocument.getObjectDescriptors());
 
       JsonLoaderService loaderService = new DefaultJsonLoaderService(this.graphDatabaseService);
 

@@ -24,7 +24,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
+import it.larusba.integration.common.document.bean.JsonDocument;
 import it.larusba.integration.neo4j.jsonloader.bean.JsonLoaderStatistics;
 
 /**
