@@ -21,10 +21,8 @@ package it.larusba.integration.neo4j.jsonloader.transformer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonParseException;
@@ -73,14 +71,14 @@ import it.larusba.integration.common.document.bean.JsonDocument;
  * @see <a href="http://neo4j.com/blog/cypher-load-json-from-url/">http://neo4j.
  *      com/blog/cypher-load-json-from-url/</a>
  */
-public class AttributeBasedJsonTransformer implements JsonTransformer<Set<String>> {
+public class AttributeBasedJsonTransformer implements JsonTransformer<List<String>> {
 
   /**
    * @see it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer#transform(java.lang.String,
    *      java.lang.String, java.lang.String)
    */
   @Override
-  public Set<String> transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
+  public List<String> transform(JsonDocument jsonDocument) throws JsonParseException, JsonMappingException, IOException {
 
     Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(),
         new TypeReference<Map<String, Object>>() {
@@ -99,7 +97,7 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<Set<String
    * @return
    */
   @SuppressWarnings("unchecked")
-  public Set<String> transform(String documentId, String documentType, Map<String, Object> documentMap) {
+  public List<String> transform(String documentId, String documentType, Map<String, Object> documentMap) {
 
     StringBuffer rootNode = new StringBuffer();
     List<String> childNodes = new ArrayList<String>();
@@ -165,6 +163,6 @@ public class AttributeBasedJsonTransformer implements JsonTransformer<Set<String
       cypher.append("\n").append(childRelationship);
     }
 
-    return new HashSet<String>(Arrays.asList(cypher.toString()));
+    return Arrays.asList(cypher.toString());
   }
 }

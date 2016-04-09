@@ -18,7 +18,7 @@
  */
 package it.larusba.integration.neo4j.jsonloader.transformer;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class AttributeBasedJsonTransformerTest {
 
     try {
 
-      JsonTransformer<Set<String>> documentTransformer = new AttributeBasedJsonTransformer();
+      JsonTransformer<List<String>> documentTransformer = new AttributeBasedJsonTransformer();
 
       String jsonPersonDocument = "{\"firstname\": \"Lorenzo\", \"lastname\": \"Speranzoni\", \"age\": 41, \"job\": \"CEO @ LARUS Business Automation\"}";
 
@@ -57,7 +57,7 @@ public class AttributeBasedJsonTransformerTest {
 
     try {
 
-      JsonTransformer<Set<String>> documentTransformer = new AttributeBasedJsonTransformer();
+      JsonTransformer<List<String>> documentTransformer = new AttributeBasedJsonTransformer();
 
       String jsonAddressDocument = "{\"street\": \"Via B. Maderna, 7\", \"zipCode\": 30174, \"city\": \"Mestre\", \"province\": \"Venice\", \"country\": \"Italy\"}";
 

@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.larusba.integration.neo4j.jsonloader.transformer.test;
+package it.larusba.integration.neo4j.jsonloader.transformer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,14 +33,15 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import it.larusba.integration.neo4j.jsonloader.bean.JsonDocument;
-import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformer;
+import it.larusba.integration.common.document.bean.JsonDocument;
+import it.larusba.integration.neo4j.jsonloader.bean.DocumentNode;
+import it.larusba.integration.neo4j.jsonloader.support.CypherGenerator;
 import it.larusba.integration.neo4j.jsonloader.util.JsonObjectDescriptorHelper;
 
 /**
  * @author Riccardo Birello
  */
-public class NodeJsonTransformer implements JsonTransformer<List<String>> {
+public class DomainDrivenJsonTransformer implements JsonTransformer<List<String>> {
 
     /*
      * (non-Javadoc)
@@ -53,7 +54,7 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
         Map<String, Object> documentMap = new ObjectMapper().readValue(jsonDocument.getContent(), new TypeReference<Map<String, Object>>() {
         });
         JsonObjectDescriptorHelper jsonObjectDescriptorHelper = new JsonObjectDescriptorHelper(jsonDocument.getObjectDescriptors());
-        Node node = transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper);
+        DocumentNode node = transform(jsonDocument.getId(), jsonDocument.getType(), documentMap, jsonObjectDescriptorHelper);
         return getAllStatements(Arrays.asList(node));
     }
 
@@ -65,7 +66,7 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      *            the node's list
      * @return the ordered statements list
      */
-    private List<String> getAllStatements(List<Node> nodes) {
+    private List<String> getAllStatements(List<DocumentNode> nodes) {
         Set<String> nodesSet = getAllNodeStatements(nodes);
         Set<String> nodesRelationsSet = getAllRelationsStatements(nodes);
         ArrayList<String> result = new ArrayList<>(nodesSet);
@@ -80,9 +81,9 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      *            the nodes list
      * @return the statements
      */
-    private Set<String> getAllNodeStatements(List<Node> nodes) {
+    private Set<String> getAllNodeStatements(List<DocumentNode> nodes) {
         Set<String> nodesSet = new HashSet<>();
-        for (Node node : nodes) {
+        for (DocumentNode node : nodes) {
             nodesSet.add(CypherGenerator.generateNodeStatement(node));
             nodesSet.addAll(getAllNodeStatements(node.getOutgoingRelations()));
         }
@@ -96,9 +97,9 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      *            the nodes list
      * @return the statements
      */
-    private Set<String> getAllRelationsStatements(List<Node> nodes) {
+    private Set<String> getAllRelationsStatements(List<DocumentNode> nodes) {
         Set<String> nodesRelationsSet = new HashSet<>();
-        for (Node node : nodes) {
+        for (DocumentNode node : nodes) {
             Set<String> stringOutgoingRelations = CypherGenerator.generateOutgoingRelationsStatements(node);
             if (stringOutgoingRelations != null) {
                 nodesRelationsSet.addAll(stringOutgoingRelations);
@@ -121,10 +122,10 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      *            the descriptor helper
      * @return the node
      */
-    private Node transform(String documentId, String documentType, Map<String, Object> documentMap, JsonObjectDescriptorHelper objectDescriptorHelper) {
+    private DocumentNode transform(String documentId, String documentType, Map<String, Object> documentMap, JsonObjectDescriptorHelper objectDescriptorHelper) {
         String nodeLabel = buildNodeLabel(documentType, documentMap, objectDescriptorHelper);
         String nodeName = nodeLabel.toLowerCase(Locale.ITALY);
-        Node node = new Node(documentId, nodeName, nodeLabel);
+        DocumentNode node = new DocumentNode(documentId, nodeName, nodeLabel);
         for (String attributeName : documentMap.keySet()) {
             Object attributeValue = documentMap.get(attributeName);
             if (attributeValue instanceof Map) {
@@ -153,7 +154,7 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      * @param attributeValue
      *            the attribute value
      */
-    private void handleSimpleAttribute(JsonObjectDescriptorHelper objectDescriptorHelper, Node node, String attributeName, Object attributeValue) {
+    private void handleSimpleAttribute(JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node, String attributeName, Object attributeValue) {
         if (objectDescriptorHelper.isAttributeInUniqueKey(node.getLabel(), attributeName)) {
             node.addKey(attributeName, (String) attributeValue);
         } else {
@@ -176,7 +177,7 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      *            the attribute value
      */
     @SuppressWarnings("unchecked")
-    private void handleList(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, Node node, String attributeName, Object attributeValue) {
+    private void handleList(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node, String attributeName, Object attributeValue) {
         List<Object> list = (List<Object>) attributeValue;
         if (!list.isEmpty()) {
             for (Object object : list) {
@@ -204,7 +205,7 @@ public class NodeJsonTransformer implements JsonTransformer<List<String>> {
      *            the attribute value
      */
     @SuppressWarnings("unchecked")
-    private void handleMap(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, Node node, String attributeName, Object attributeValue) {
+    private void handleMap(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node, String attributeName, Object attributeValue) {
         String type = buildNodeLabel(attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper);
         node.addOutgoingRelation(transform(documentId, type, (Map<String, Object>) attributeValue, objectDescriptorHelper));
     }

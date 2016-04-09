@@ -19,7 +19,7 @@
 package it.larusba.integration.neo4j.jsonloader.service;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import javax.ws.rs.core.Context;
 
@@ -42,51 +42,52 @@ import it.larusba.integration.neo4j.jsonloader.transformer.JsonTransformerFactor
  */
 public class DefaultJsonLoaderService implements JsonLoaderService {
 
-  private static Logger LOGGER = LoggerFactory.getLogger(DefaultJsonLoaderService.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(DefaultJsonLoaderService.class);
 
-  @Context
-  private GraphDatabaseService graphDatabaseService;
+	@Context
+	private GraphDatabaseService graphDatabaseService;
 
-  public DefaultJsonLoaderService(GraphDatabaseService graphDatabaseService) {
-    this.graphDatabaseService = graphDatabaseService;
-  }
+	public DefaultJsonLoaderService(GraphDatabaseService graphDatabaseService) {
+		this.graphDatabaseService = graphDatabaseService;
+	}
 
-  /**
-   * @see it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService#setGraphDatabaseService(org.neo4j.graphdb.GraphDatabaseService)
-   */
-  @Override
-  public void setGraphDatabaseService(GraphDatabaseService graphDatabaseService) {
-    this.graphDatabaseService = graphDatabaseService;
-  }
+	/**
+	 * @see it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService#setGraphDatabaseService(org.neo4j.graphdb.GraphDatabaseService)
+	 */
+	@Override
+	public void setGraphDatabaseService(GraphDatabaseService graphDatabaseService) {
+		this.graphDatabaseService = graphDatabaseService;
+	}
 
-  /**
-   * @see it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService#save(it.larusba.integration.neo4j.jsonloader.bean.JsonDocumentTest)
-   */
-  @Override
-  public JsonLoaderStatistics save(JsonDocument jsonDocument)
-      throws JsonParseException, JsonMappingException, IOException {
+	/**
+	 * @see it.larusba.integration.neo4j.jsonloader.service.JsonLoaderService#save(it.larusba.integration.neo4j.jsonloader.bean.JsonDocumentTest)
+	 */
+	@Override
+	public JsonLoaderStatistics save(JsonDocument jsonDocument)
+	    throws JsonParseException, JsonMappingException, IOException {
 
-    JsonLoaderStatistics jsonLoaderStatistics = null;
+		JsonLoaderStatistics jsonLoaderStatistics = null;
 
-    if (this.graphDatabaseService == null || !this.graphDatabaseService.isAvailable(10))
-      throw new IllegalStateException("Database connection not available.");
+		if (this.graphDatabaseService == null || !this.graphDatabaseService.isAvailable(10))
+			throw new IllegalStateException("Database connection not available.");
 
-    JsonTransformer<Set<String>> jsonTransformer = JsonTransformerFactory.getInstance(jsonDocument.getMappingStrategy());
+		JsonTransformer<List<String>> jsonTransformer = JsonTransformerFactory
+		    .getInstance(jsonDocument.getMappingStrategy());
 
-    String cypher = jsonTransformer.transform(jsonDocument).toArray(new String[] {})[0];
+		String cypher = jsonTransformer.transform(jsonDocument).toArray(new String[] {})[0];
 
-    LOGGER.info("Cypher statement:");
-    LOGGER.info("\n" + cypher);
+		LOGGER.info("Cypher statement:");
+		LOGGER.info("\n" + cypher);
 
-    try (Transaction tx = this.graphDatabaseService.beginTx()) {
+		try (Transaction tx = this.graphDatabaseService.beginTx()) {
 
-      Result result = this.graphDatabaseService.execute(cypher);
+			Result result = this.graphDatabaseService.execute(cypher);
 
-      jsonLoaderStatistics = new JsonLoaderStatistics(result.getQueryStatistics());
+			jsonLoaderStatistics = new JsonLoaderStatistics(result.getQueryStatistics());
 
-      tx.success();
-    }
+			tx.success();
+		}
 
-    return jsonLoaderStatistics;
-  }
+		return jsonLoaderStatistics;
+	}
 }

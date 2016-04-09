@@ -18,7 +18,7 @@
  */
 package it.larusba.integration.neo4j.jsonloader.transformer;
 
-import java.util.Set;
+import java.util.List;
 
 import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
 
@@ -28,7 +28,7 @@ import it.larusba.integration.common.document.mapping.JsonMappingStrategy;
  */
 public class JsonTransformerFactory {
 
-  public static final JsonTransformer<Set<String>> getInstance(JsonMappingStrategy graphMappingStrategy) {
+  public static final JsonTransformer<List<String>> getInstance(JsonMappingStrategy graphMappingStrategy) {
 
     if (graphMappingStrategy == null) {
       throw new IllegalArgumentException("Mapping stategy cannot be null");
@@ -37,7 +37,7 @@ public class JsonTransformerFactory {
     switch (graphMappingStrategy) {
 
     case DOMAIN_DRIVEN:
-      return new DomainBasedJsonTransformer();
+      return new DomainDrivenJsonTransformer();
 
     case FULLY_FLEXIBLE_BUT_NOT_YET_INVENTED:
       throw new UnsupportedOperationException();

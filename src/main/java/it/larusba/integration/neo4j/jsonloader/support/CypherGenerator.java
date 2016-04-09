@@ -16,13 +16,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.larusba.integration.neo4j.jsonloader.transformer.test;
+package it.larusba.integration.neo4j.jsonloader.support;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import it.larusba.integration.neo4j.jsonloader.bean.DocumentNode;
 
 /**
  * The Cypher generator class starting from nodes.
@@ -38,7 +40,7 @@ public final class CypherGenerator {
      *            the current node
      * @return the statement
      */
-    public static String generateNodeStatement(Node node) {
+    public static String generateNodeStatement(DocumentNode node) {
         StringBuffer buffer = new StringBuffer();
         buffer.append("MERGE (").append(node.getName()).append(":").append(node.getLabel());
         if (node.getKeys().isEmpty()) {
@@ -117,11 +119,11 @@ public final class CypherGenerator {
      *            the current node
      * @return the outgoing relations statements
      */
-    public static Set<String> generateOutgoingRelationsStatements(Node node) {
+    public static Set<String> generateOutgoingRelationsStatements(DocumentNode node) {
         Set<String> response = null;
         if (!node.getOutgoingRelations().isEmpty()) {
             response = new HashSet<>();
-            for (Node currentNode : node.getOutgoingRelations()) {
+            for (DocumentNode currentNode : node.getOutgoingRelations()) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(node.getLabel()).append("_").append(currentNode.getLabel());
                 String relationName = buffer.toString().toUpperCase(Locale.ITALY);
