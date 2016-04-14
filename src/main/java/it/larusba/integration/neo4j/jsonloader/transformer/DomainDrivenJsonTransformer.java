@@ -56,8 +56,9 @@ public class DomainDrivenJsonTransformer implements JsonTransformer<String> {
 		    });
 		JsonObjectDescriptorHelper jsonObjectDescriptorHelper = new JsonObjectDescriptorHelper(
 		    jsonDocument.getObjectDescriptors());
+		int startIndex = 0;
 		DocumentNode node = transform(jsonDocument.getId(), jsonDocument.getType(), documentMap,
-		    jsonObjectDescriptorHelper);
+		    jsonObjectDescriptorHelper, startIndex);
 		return getAllStatementsAsString(getAllStatements(Arrays.asList(node)));
 	}
 
@@ -72,26 +73,27 @@ public class DomainDrivenJsonTransformer implements JsonTransformer<String> {
 	 *          the document's map
 	 * @param objectDescriptorHelper
 	 *          the descriptor helper
+	 * @param index the index
 	 * @return the node
 	 */
 	private DocumentNode transform(String documentId, String documentType, Map<String, Object> documentMap,
-	    JsonObjectDescriptorHelper objectDescriptorHelper) {
+	    JsonObjectDescriptorHelper objectDescriptorHelper, int index) {
 		String nodeLabel = buildNodeLabel(documentType, documentMap, objectDescriptorHelper);
 		String nodeName = nodeLabel.toLowerCase(Locale.ITALY);
 		DocumentNode node = new DocumentNode(documentId, documentType, nodeName, nodeLabel);
+		node.setDepth(index);
+		index++;
 		for (String attributeName : documentMap.keySet()) {
 			Object attributeValue = documentMap.get(attributeName);
 			if (attributeValue instanceof Map) {
-				handleMap(documentId, objectDescriptorHelper, node, attributeName, attributeValue);
+				handleMap(documentId, objectDescriptorHelper, node, attributeName, attributeValue, index);
 			} else if (attributeValue instanceof List) {
-				handleList(documentId, objectDescriptorHelper, node, attributeName, attributeValue);
+				handleList(documentId, objectDescriptorHelper, node, attributeName, attributeValue, index);
 			} else {
 				handleSimpleAttribute(objectDescriptorHelper, node, attributeName, attributeValue);
 			}
 		}
-		// FIXME is it correct to take the absolute hash?
-		int hashCode = Math.abs(node.hashCode());
-		node.setName(node.getName() + hashCode);
+		node.setName(node.getQualifiedName());
 		return node;
 	}
 
@@ -129,15 +131,16 @@ public class DomainDrivenJsonTransformer implements JsonTransformer<String> {
 	 *          the attribute name
 	 * @param attributeValue
 	 *          the attribute value
+	 * @param index the index
 	 */
 	@SuppressWarnings("unchecked")
 	private void handleList(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
-	    String attributeName, Object attributeValue) {
+	    String attributeName, Object attributeValue, int index) {
 		List<Object> list = (List<Object>) attributeValue;
 		if (!list.isEmpty()) {
 			for (Object object : list) {
 				if (object instanceof Map) {
-					handleMap(documentId, objectDescriptorHelper, node, attributeName, object);
+					handleMap(documentId, objectDescriptorHelper, node, attributeName, object, index);
 				} else {
 					node.addListAttribute(attributeName, object);
 				}
@@ -158,12 +161,15 @@ public class DomainDrivenJsonTransformer implements JsonTransformer<String> {
 	 *          the attribute name
 	 * @param attributeValue
 	 *          the attribute value
+	 * @param index the index
 	 */
 	@SuppressWarnings("unchecked")
 	private void handleMap(String documentId, JsonObjectDescriptorHelper objectDescriptorHelper, DocumentNode node,
-	    String attributeName, Object attributeValue) {
+	    String attributeName, Object attributeValue, int index) {
 		String type = buildNodeLabel(attributeName, (Map<String, Object>) attributeValue, objectDescriptorHelper);
-		node.addOutgoingRelation(transform(documentId, type, (Map<String, Object>) attributeValue, objectDescriptorHelper));
+		DocumentNode childNode = transform(documentId, type, (Map<String, Object>) attributeValue, objectDescriptorHelper, index);
+		childNode.setParentPropertyName(attributeName);
+        node.addOutgoingRelation(childNode);
 	}
 
 	/**

@@ -27,178 +27,190 @@ import java.util.Set;
 import it.larusba.integration.neo4j.jsonloader.bean.DocumentNode;
 
 /**
- * This class generates a cypher equivalent representation from the provided input node
+ * This class generates a cypher equivalent representation from the provided
+ * input node
  * 
  * @author Riccardo Birello
  */
 public final class CypherGenerator {
 
-	/**
-	 * The method generates a node statement.
-	 * 
-	 * @param node
-	 *          current node to be translated into its cypher representation
-	 * @return the statement
-	 */
-	public static String generateNodeStatement(DocumentNode node) {
+    /**
+     * The method generates a node statement.
+     * 
+     * @param node
+     *            current node to be translated into its cypher representation
+     * @return the statement
+     */
+    public static String generateNodeStatement(DocumentNode node) {
 
-		StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
 
-		buffer.append("MERGE (");
-		buffer.append(node.getName());
-		buffer.append(":");
-		buffer.append(node.getLabel());
-		buffer.append(" {");
-		buffer.append(buildUniqueKey(node));
-		buffer.append("})");
-		buffer.append(System.lineSeparator());
-		buffer.append("SET ");
-		buffer.append(buildDocumentIdProperty(node));
-		buffer.append(buildPrimitiveProperties(node));
-		buffer.append(buildArrayProperties(node));
+        buffer.append("MERGE (");
+        buffer.append(node.getName());
+        buffer.append(":");
+        buffer.append(node.getLabel());
+        buffer.append(" {");
+        buffer.append(buildUniqueKey(node));
+        buffer.append("})");
+        buffer.append(System.lineSeparator());
+        buffer.append("SET ");
+        buffer.append(buildDocumentIdProperty(node));
+        buffer.append(buildPrimitiveProperties(node));
+        buffer.append(buildArrayProperties(node));
 
-		return buffer.toString();
-	}
+        return buffer.toString();
+    }
 
-	/**
-	 * The method generates the outgoing relations statements.
-	 * 
-	 * @param node
-	 *          current node to be translated into its cypher representation
-	 * @return the outgoing relations statements
-	 */
-	public static Set<String> generateOutgoingRelationsStatements(DocumentNode node) {
-		
-		Set<String> response = null;
-		
-		if (!node.getOutgoingRelations().isEmpty()) {
-			response = new HashSet<>();
-			for (DocumentNode currentNode : node.getOutgoingRelations()) {
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(node.getType().toUpperCase(Locale.ITALY)).append("_").append(currentNode.getLabel());
-				String relationName = buffer.toString().toUpperCase(Locale.ITALY);
-				response.add(String.format("MERGE (%s)-[:%s]->(%s)", node.getName(), relationName, currentNode.getName()));
-			}
-		}
-		
-		return response;
-	}
+    /**
+     * The method generates the outgoing relations statements.
+     * 
+     * @param node
+     *            current node to be translated into its cypher representation
+     * @return the outgoing relations statements
+     */
+    public static Set<String> generateOutgoingRelationsStatements(DocumentNode node) {
 
-	/**
-	 * The method builds a string from the attributes map.
-	 * 
-	 * @param node
-	 *          current node to be translated into its cypher representation
-	 * @return the formatted string
-	 */
-	private static String buildUniqueKey(DocumentNode node) {
-	
-		StringBuffer buffer = new StringBuffer();
-		Map<String, Object> keys = node.getKeys();
-		if (keys.isEmpty()) {
-			if (node.getAttributes().isEmpty()) {
-				throw new IllegalStateException("The node cannot be completely empty");
-			} else {
-				node.getKeys().putAll(node.getAttributes());
-				node.getAttributes().clear();
-			}
-		}
-		
-		for (String key : node.getKeys().keySet()) {
-			Object value = node.getKeys().get(key);
-			if (value != null) {
-				if (value instanceof String)
-					buffer.append(key).append(": '").append(((String) value).replace("'", "\\'")).append("', ");
-				else
-					buffer.append(key).append(": ").append(value).append(", ");
-			}
-		}
-		buffer.delete(buffer.length() - 2, buffer.length());
-	
-		return buffer.toString();
-	}
+        Set<String> response = null;
 
-	/**
-	 * @param node
-	 *          current node to be translated into its cypher representation
-	 * @return
-	 */
-	private static String buildDocumentIdProperty(DocumentNode node) {
-		return String.format("%s.documentIds = coalesce(filter(x in %s.documentIds where x <> '%s'), []) + ['%s']",
-		    node.getName(), node.getName(), node.getDocumentId(), node.getDocumentId());
-	}
+        if (!node.getOutgoingRelations().isEmpty()) {
+            response = new HashSet<>();
+            for (DocumentNode currentNode : node.getOutgoingRelations()) {
+                StringBuffer bufferRelationLabel = new StringBuffer();
+                bufferRelationLabel.append(node.getLabel()).append("_").append(currentNode.getLabel());
+                String relationLabel = bufferRelationLabel.toString().toUpperCase(Locale.ITALY);
+                bufferRelationLabel.append(node.hashCode());
+                StringBuffer bufferRelationName = new StringBuffer();
+                bufferRelationName.append(node.getName()).append(currentNode.getName()).append("_").append(currentNode.getDepth());
+                String relationName = bufferRelationName.toString().toLowerCase(Locale.ITALY);
+                String documentIds = String.format("%s.documentIds=coalesce(filter(x in %s.documentIds where not(x='%s')), []) + ['%s']", relationName, relationName, currentNode.getDocumentId(), currentNode.getDocumentId());
+                String depths = String.format("%s.depths=coalesce(filter(x in %s.depths where not(x=%s)), []) + [%s]", relationName, relationName, currentNode.getDepth(), currentNode.getDepth());
+                String property = String.format("%s.property='%s'", relationName, currentNode.getParentPropertyName());
+                // TODO try to handle the documentsIds like the properties in
+                // nodes
+                StringBuffer bufferStatement = new StringBuffer();
+                bufferStatement.append(String.format("MERGE (%s)-[%s:%s]->(%s)", node.getName(), relationName, relationLabel, currentNode.getName()));
+                bufferStatement.append(System.lineSeparator());
+                bufferStatement.append("SET ").append(documentIds).append(", ").append(depths).append(", ").append(property);
+                response.add(bufferStatement.toString());
+            }
+        }
 
-	/**
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private static StringBuffer buildPrimitiveProperties(DocumentNode node) {
-	
-		StringBuffer buffer = new StringBuffer();
-	
-		if (!node.getAttributes().isEmpty()) {
-			buffer.append(", ");
-			for (String key : node.getAttributes().keySet()) {
-				Object value = node.getAttributes().get(key);
-				if (value != null) {
-					if (value instanceof String) {
-						buffer.append(node.getName()).append(".").append(key).append(" = '")
-						    .append(((String) value).replace("'", "\\'")).append("', ");
-					} else
-						buffer.append(node.getName()).append(".").append(key).append(" = ").append(value).append(", ");
-				}
-			}
-			buffer.delete(buffer.length() - 2, buffer.length());
-		}
-	
-		return buffer;
-	}
+        return response;
+    }
 
-	/**
-	 * @param node
-	 *          current node to be translated into its cypher representation
-	 * @return
-	 */
-	private static StringBuffer buildArrayProperties(DocumentNode node) {
-	
-		StringBuffer buffer = new StringBuffer();
-	
-		if (!node.getListAttributes().isEmpty()) {
-			buffer.append(", ");
-			for (String key : node.getListAttributes().keySet()) {
-				List<Object> values = node.getListAttributes().get(key);
-				buffer.append(node.getName()).append(".").append(key).append(" = ").append(buildArrayString(values));
-			}
-		}
-	
-		return buffer;
-	}
+    /**
+     * The method builds a string from the attributes map.
+     * 
+     * @param node
+     *            current node to be translated into its cypher representation
+     * @return the formatted string
+     */
+    private static String buildUniqueKey(DocumentNode node) {
 
-	/**
-	 * The method builds a string from an array of strings.
-	 * 
-	 * @param elements
-	 *          the array of strings
-	 * @return the formatted string
-	 */
-	private static StringBuffer buildArrayString(List<Object> elements) {
-		
-		StringBuffer buffer = new StringBuffer();
-		
-		buffer.append("[");
-		
-		for (Object element : elements) {
-			if (element instanceof String)
-				buffer.append("'").append(((String) element).replace("'", "\\'")).append("', ");
-			else
-				buffer.append(element).append(", ");
-		}
-		buffer.delete(buffer.length() - 2, buffer.length());
-		
-		buffer.append("]");
-		
-		return buffer;
-	}
+        StringBuffer buffer = new StringBuffer();
+        Map<String, Object> keys = node.getKeys();
+        if (keys.isEmpty()) {
+            if (node.getAttributes().isEmpty()) {
+                throw new IllegalStateException("The node cannot be completely empty");
+            } else {
+                node.getKeys().putAll(node.getAttributes());
+                node.getAttributes().clear();
+            }
+        }
+
+        for (String key : node.getKeys().keySet()) {
+            Object value = node.getKeys().get(key);
+            if (value != null) {
+                if (value instanceof String)
+                    buffer.append(key).append(": '").append(((String) value).replace("'", "\\'")).append("', ");
+                else
+                    buffer.append(key).append(": ").append(value).append(", ");
+            }
+        }
+        buffer.delete(buffer.length() - 2, buffer.length());
+
+        return buffer.toString();
+    }
+
+    /**
+     * @param node
+     *            current node to be translated into its cypher representation
+     * @return
+     */
+    private static String buildDocumentIdProperty(DocumentNode node) {
+        return String.format("%s.documentIds = coalesce(filter(x in %s.documentIds where x <> '%s'), []) + ['%s']", node.getName(), node.getName(), node.getDocumentId(), node.getDocumentId());
+    }
+
+    /**
+     * 
+     * @param node
+     * @return
+     */
+    private static StringBuffer buildPrimitiveProperties(DocumentNode node) {
+
+        StringBuffer buffer = new StringBuffer();
+
+        if (!node.getAttributes().isEmpty()) {
+            buffer.append(", ");
+            for (String key : node.getAttributes().keySet()) {
+                Object value = node.getAttributes().get(key);
+                if (value != null) {
+                    if (value instanceof String) {
+                        buffer.append(node.getName()).append(".").append(key).append(" = '").append(((String) value).replace("'", "\\'")).append("', ");
+                    } else
+                        buffer.append(node.getName()).append(".").append(key).append(" = ").append(value).append(", ");
+                }
+            }
+            buffer.delete(buffer.length() - 2, buffer.length());
+        }
+
+        return buffer;
+    }
+
+    /**
+     * @param node
+     *            current node to be translated into its cypher representation
+     * @return
+     */
+    private static StringBuffer buildArrayProperties(DocumentNode node) {
+
+        StringBuffer buffer = new StringBuffer();
+
+        if (!node.getListAttributes().isEmpty()) {
+            buffer.append(", ");
+            for (String key : node.getListAttributes().keySet()) {
+                List<Object> values = node.getListAttributes().get(key);
+                buffer.append(node.getName()).append(".").append(key).append(" = ").append(buildArrayString(values));
+            }
+        }
+
+        return buffer;
+    }
+
+    /**
+     * The method builds a string from an array of strings.
+     * 
+     * @param elements
+     *            the array of strings
+     * @return the formatted string
+     */
+    private static StringBuffer buildArrayString(List<Object> elements) {
+
+        StringBuffer buffer = new StringBuffer();
+
+        buffer.append("[");
+
+        for (Object element : elements) {
+            if (element instanceof String)
+                buffer.append("'").append(((String) element).replace("'", "\\'")).append("', ");
+            else
+                buffer.append(element).append(", ");
+        }
+        buffer.delete(buffer.length() - 2, buffer.length());
+
+        buffer.append("]");
+
+        return buffer;
+    }
 
 }
