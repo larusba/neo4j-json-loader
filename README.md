@@ -26,7 +26,7 @@ Current implementation should print an early draft version of the cypher script 
 
 ## License
 
-Copyright (c) 2016 LARUS Business Automation [http://www.larus-ba.it]
+Copyright (c) 2016 [LARUS Business Automation](http://www.larus-ba.it)
 
 This file is part of the "LARUS Integration Framework for Neo4j".
 
